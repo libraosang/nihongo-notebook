@@ -1,4 +1,33 @@
 {
   "schema_version": 1,
-  "entries": []
+  "entries": [
+    {
+      "id": "20260515-001",
+      "date": "2026-05-15T09:10:03.445Z",
+      "score": 3,
+      "via": "web",
+      "question_type": "cn2jp"
+    },
+    {
+      "id": "20260515-003",
+      "date": "2026-05-15T09:10:17.546Z",
+      "score": 4,
+      "via": "web",
+      "question_type": "knowledge"
+    },
+    {
+      "id": "20260515-002",
+      "date": "2026-05-15T09:10:19.743Z",
+      "score": 5,
+      "via": "web",
+      "question_type": "cn2jp"
+    },
+    {
+      "id": "20260515-004",
+      "date": "2026-05-15T09:10:22.310Z",
+      "score": 5,
+      "via": "web",
+      "question_type": "jp2cn"
+    }
+  ]
 }
