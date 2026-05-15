@@ -4,8 +4,24 @@
    ======================================================== */
 
 import { startQuiz, openTokenSettings } from './quiz.js';
-import { hasToken, updateFile } from './github.js';
+import { hasToken, updateFile, getFile } from './github.js';
 import { initialSrs } from './srs.js';
+
+/* ===== 从 GitHub API 直接刷新（绕过 Pages CDN 缓存） ===== */
+async function reloadFromGitHub() {
+  // 有 Token 时走 API（实时），否则走 Pages（有缓存延迟）
+  if (hasToken()) {
+    try {
+      const { json } = await getFile('data/notes.json');
+      state.notes = json?.notes || [];
+      render();
+      return;
+    } catch {
+      // API 失败时 fallback 到 Pages
+    }
+  }
+  await loadNotes();
+}
 
 /* ===== 常量 ===== */
 const TYPE_LABELS = {
@@ -46,6 +62,7 @@ async function loadNotes() {
   }
 }
 window._reloadNotes = loadNotes;
+window._reloadFromGitHub = reloadFromGitHub;
 
 /* ===== SRS 状态 ===== */
 function getSrsStatus(note) {
@@ -242,11 +259,11 @@ async function confirmDelete(id, front) {
       data.updated_at = new Date().toISOString();
       return data;
     }, `delete: ${front} (${id})`);
-    // 写回成功后重新拉一次确保同步
-    await loadNotes();
+    // 从 API 直接拉，绕过 CDN 缓存
+    await reloadFromGitHub();
   } catch (e) {
     alert('删除失败，已恢复本地数据：' + (e.message || String(e)));
-    await loadNotes(); // 从 GitHub 恢复
+    await reloadFromGitHub(); // 失败也用 API 还原
   }
 }
 
@@ -433,7 +450,7 @@ async function submitAddNote() {
     }, `add: ${front} (${type}) via web`);
 
     showFormMsg(`✓ 已保存！ID: ${newId}`, 'ok');
-    await loadNotes();
+    await reloadFromGitHub();
     setTimeout(closeEditModal, 900);
   } catch (e) {
     $('#add-submit-btn').disabled = false;
@@ -478,7 +495,7 @@ async function submitEditNote(id) {
     }, `edit: ${front} (${id}) via web`);
 
     showFormMsg('✓ 已保存！', 'ok');
-    await loadNotes();
+    await reloadFromGitHub();
     setTimeout(closeEditModal, 700);
   } catch (e) {
     $('#add-submit-btn').disabled = false;

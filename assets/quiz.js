@@ -197,7 +197,9 @@ function showSummary(err) {
     </div>`;
   $('#quiz-done').addEventListener('click', () => {
     $('#quiz-overlay').classList.remove('open');
-    if (window._reloadNotes) window._reloadNotes();
+    // 答题写回后从 API 直接刷新，绕过 Pages CDN 缓存
+    if (window._reloadFromGitHub) window._reloadFromGitHub();
+    else if (window._reloadNotes) window._reloadNotes();
   });
   if (err) $('#retry-save')?.addEventListener('click', finishQuiz);
 }
