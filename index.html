@@ -77,5 +77,25 @@
   <div class="quiz-overlay" id="quiz-overlay"></div>
 
   <script type="module" src="assets/app.js"></script>
+  <script>
+    // Service Worker 自动更新：每次页面加载时主动检查新版本
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').then(reg => {
+        reg.update(); // 主动向服务器请求最新 sw.js
+        reg.addEventListener('updatefound', () => {
+          const newSW = reg.installing;
+          newSW?.addEventListener('statechange', () => {
+            // 新 SW 安装完毕后，若当前页面没有其他标签页，立即接管
+            if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
+              newSW.postMessage({ type: 'SKIP_WAITING' });
+              window.location.reload(); // 重载以加载新版本
+            }
+          });
+        });
+      });
+      // 收到控制权转移时重载
+      navigator.serviceWorker.addEventListener('controllerchange', () => window.location.reload());
+    }
+  </script>
 </body>
 </html>

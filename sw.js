@@ -4,7 +4,7 @@
    - data/notes.json はネットワークファースト（更新を素早く反映）
    ======================================================== */
 
-const CACHE_NAME = 'nihongo-notebook-v3-stage4';
+const CACHE_NAME = 'nihongo-notebook-v4-v1.1';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -20,8 +20,8 @@ const STATIC_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) =>
-      cache.addAll(STATIC_ASSETS).catch(() => {/* 一部失敗しても続行 */})
-    ).then(() => self.skipWaiting())
+      cache.addAll(STATIC_ASSETS).catch(() => {})
+    ).then(() => self.skipWaiting()) // 立即激活，不等旧页面关闭
   );
 });
 
@@ -29,8 +29,13 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k)))
-    ).then(() => self.clients.claim())
+    ).then(() => self.clients.claim()) // 立即接管所有页面
   );
+});
+
+// 响应页面发来的 SKIP_WAITING 消息
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') self.skipWaiting();
 });
 
 self.addEventListener('fetch', (event) => {
