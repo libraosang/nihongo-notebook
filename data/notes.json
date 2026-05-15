@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-05-15T17:39:04+09:00",
+  "updated_at": "2026-05-15T09:10:22.747Z",
   "notes": [
     {
       "id": "20260515-001",
@@ -29,12 +29,12 @@
       "context_note": "和製英語。英語の brush up とは意味が違う（英語では「復習」の意）",
       "created_at": "2026-05-15T17:16:00+09:00",
       "srs": {
-        "interval": 0,
-        "ease": 2.5,
-        "reps": 0,
+        "interval": 1,
+        "ease": 2.36,
+        "reps": 1,
         "lapses": 0,
         "next_review": "2026-05-15",
-        "last_review": null
+        "last_review": "2026-05-15"
       }
     },
     {
@@ -60,12 +60,12 @@
       "context_note": "社内では時間帯を問わず使える万能な挨拶。「お疲れ様でした」は退勤時。",
       "created_at": "2026-05-15T17:16:00+09:00",
       "srs": {
-        "interval": 0,
-        "ease": 2.5,
-        "reps": 0,
+        "interval": 1,
+        "ease": 2.6,
+        "reps": 1,
         "lapses": 0,
         "next_review": "2026-05-15",
-        "last_review": null
+        "last_review": "2026-05-15"
       }
     },
     {
@@ -91,12 +91,12 @@
       "context_note": "「する」は例外で「せざるを得ない」になる。話し言葉では「〜しないわけにはいかない」のほうが自然。",
       "created_at": "2026-05-15T17:16:00+09:00",
       "srs": {
-        "interval": 0,
+        "interval": 1,
         "ease": 2.5,
-        "reps": 0,
+        "reps": 1,
         "lapses": 0,
         "next_review": "2026-05-15",
-        "last_review": null
+        "last_review": "2026-05-15"
       }
     },
     {
@@ -127,12 +127,12 @@
       "id": "20260515-004",
       "created_at": "2026-05-15T17:39:04+09:00",
       "srs": {
-        "interval": 0,
-        "ease": 2.5,
-        "reps": 0,
+        "interval": 1,
+        "ease": 2.6,
+        "reps": 1,
         "lapses": 0,
         "next_review": "2026-05-15",
-        "last_review": null
+        "last_review": "2026-05-15"
       }
     }
   ]
