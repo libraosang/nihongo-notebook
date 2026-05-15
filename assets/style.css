@@ -397,8 +397,39 @@ a:hover { text-decoration: underline; }
   font-size: 0.78rem;
 }
 
-/* ===== フッター ===== */
-.footer {
+/* ===== 详情 Modal 底部操作区 ===== */
+.modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--hai);
+}
+.btn-edit {
+  background: var(--shironeri);
+  border: 1px solid var(--akane);
+  color: var(--akane);
+  border-radius: var(--radius);
+  padding: 0.55rem 1.1rem;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-edit:hover { background: var(--akane); color: var(--shironeri); }
+.btn-delete {
+  background: transparent;
+  border: 1px solid var(--hai);
+  color: var(--usuzumi);
+  border-radius: var(--radius);
+  padding: 0.55rem 1.1rem;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-left: auto;  /* 推到右侧 */
+}
+.btn-delete:hover { border-color: #c0392b; color: #c0392b; background: rgba(192,57,43,.06); }
   margin-top: 3rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--hai);
