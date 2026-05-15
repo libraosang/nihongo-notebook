@@ -1,0 +1,32 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*~
+
+# WorkBuddy
+.workbuddy/
+
+# Private notes (絶対に push しない)
+private/
+nihongo-private/
+*.private.json
+
+# Build / dependencies (将来用)
+node_modules/
+dist/
+build/
+.cache/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Env
+.env
+.env.local
