@@ -1,38 +1,7 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-05-15T09:21:44.579Z",
+  "updated_at": "2026-05-15T09:21:50.031Z",
   "notes": [
-    {
-      "id": "20260515-002",
-      "type": "phrase",
-      "front": "お疲れ様です",
-      "back": "辛苦了 / 您好（同事间问候）",
-      "kana": "おつかれさまです",
-      "romaji": "otsukaresama desu",
-      "pos": "挨拶",
-      "examples": [
-        {
-          "ja": "お疲れ様です、本日の進捗を共有します。",
-          "zh": "辛苦了，分享一下今天的进展。"
-        }
-      ],
-      "tags": [
-        "ビジネス",
-        "挨拶",
-        "日常"
-      ],
-      "source": "サンプル",
-      "context_note": "社内では時間帯を問わず使える万能な挨拶。「お疲れ様でした」は退勤時。",
-      "created_at": "2026-05-15T17:16:00+09:00",
-      "srs": {
-        "interval": 1,
-        "ease": 2.6,
-        "reps": 1,
-        "lapses": 0,
-        "next_review": "2026-05-15",
-        "last_review": "2026-05-15"
-      }
-    },
     {
       "type": "word",
       "front": "ローカライズ",
