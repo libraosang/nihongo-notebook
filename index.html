@@ -2,106 +2,63 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#c4382d">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="日本語ノート">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <title>日本語学習ノート · Nihongo Notebook</title>
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
+  <link rel="apple-touch-icon" href="assets/icon-apple-touch.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --akane: #c4382d;
-      --sumi: #1a1a1a;
-      --kinari: #faf6f0;
-      --usuzumi: #888;
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Noto Serif JP', serif;
-      background: var(--kinari);
-      color: var(--sumi);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-      line-height: 1.7;
-    }
-    .container {
-      max-width: 640px;
-      text-align: center;
-    }
-    .seal {
-      display: inline-block;
-      width: 80px;
-      height: 80px;
-      background: var(--akane);
-      color: var(--kinari);
-      border-radius: 8px;
-      font-family: 'Noto Serif JP', serif;
-      font-weight: 700;
-      font-size: 2rem;
-      line-height: 80px;
-      letter-spacing: -0.05em;
-      margin-bottom: 2rem;
-      box-shadow: 0 2px 8px rgba(196, 56, 45, 0.25);
-      transform: rotate(-3deg);
-    }
-    h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      margin-bottom: 0.5rem;
-      letter-spacing: 0.05em;
-    }
-    .sub {
-      color: var(--usuzumi);
-      font-family: 'Noto Sans JP', sans-serif;
-      font-size: 0.9rem;
-      margin-bottom: 2rem;
-      letter-spacing: 0.1em;
-    }
-    .stage {
-      display: inline-block;
-      background: white;
-      border: 1px solid #e8e0d0;
-      border-radius: 6px;
-      padding: 1.5rem 2rem;
-      margin-top: 1rem;
-      font-family: 'Noto Sans JP', sans-serif;
-      font-size: 0.95rem;
-    }
-    .stage-label {
-      color: var(--akane);
-      font-weight: 500;
-      font-size: 0.8rem;
-      letter-spacing: 0.2em;
-      margin-bottom: 0.5rem;
-    }
-    .footer {
-      margin-top: 3rem;
-      font-family: 'Noto Sans JP', sans-serif;
-      font-size: 0.8rem;
-      color: var(--usuzumi);
-    }
-    a { color: var(--akane); text-decoration: none; }
-    a:hover { text-decoration: underline; }
-  </style>
+  <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
-  <div class="container">
-    <div class="seal">学</div>
-    <h1>日本語学習ノート</h1>
-    <p class="sub">NIHONGO NOTEBOOK</p>
-    <div class="stage">
-      <div class="stage-label">STAGE 1 · 骨組み完成</div>
-      <div>データベース初期化済み（3 件のサンプル）</div>
-      <div style="color: var(--usuzumi); font-size: 0.85rem; margin-top: 0.5rem;">
-        Stage 2 で閲覧 UI を、Stage 3 で WorkBuddy 連携を、Stage 4 で答題機能を実装します。
+  <main class="app">
+    <header class="header">
+      <div class="brand">
+        <div class="seal">学</div>
+        <div class="brand-text">
+          <h1>日本語学習ノート</h1>
+          <div class="sub">NIHONGO NOTEBOOK</div>
+        </div>
       </div>
+      <div class="header-stats" id="stats">読み込み中…</div>
+    </header>
+
+    <div class="search-bar">
+      <input
+        type="search"
+        id="search-input"
+        class="search-input"
+        placeholder="検索 — 単語、読み、意味、例文、タグから…"
+        autocomplete="off"
+        spellcheck="false">
     </div>
-    <div class="footer">
-      <a href="https://github.com/libraosang/nihongo-notebook">GitHub</a>
+
+    <div class="tabs" id="tabs"></div>
+    <div class="tag-filters" id="tag-filters"></div>
+
+    <div class="notes-list" id="notes-list">
+      <div class="empty"><div class="em">⌛</div>読み込み中…</div>
+    </div>
+
+    <footer class="footer">
+      <a href="https://github.com/libraosang/nihongo-notebook" target="_blank" rel="noopener">GitHub</a>
       ・ Built with WorkBuddy 🌟
-    </div>
+      ・ <span style="color:var(--usuzumi-light);">Stage 2 · ブラウザ閲覧</span>
+    </footer>
+  </main>
+
+  <div class="modal-backdrop" id="modal">
+    <div class="modal" id="modal-content"></div>
   </div>
+
+  <script src="assets/app.js"></script>
 </body>
 </html>

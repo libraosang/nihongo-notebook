@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="80" fill="#faf6f0"/>
+  <g transform="translate(256 256) rotate(-3)">
+    <rect x="-160" y="-160" width="320" height="320" rx="32" fill="#c4382d"/>
+    <text x="0" y="0"
+          font-family="'Noto Serif JP', 'Songti SC', serif"
+          font-size="240"
+          font-weight="700"
+          fill="#faf6f0"
+          text-anchor="middle"
+          dominant-baseline="central">学</text>
+  </g>
+</svg>
