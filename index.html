@@ -28,8 +28,15 @@
           <div class="sub">NIHONGO NOTEBOOK</div>
         </div>
       </div>
-      <div class="header-stats" id="stats">読み込み中…</div>
+      <div class="header-right">
+        <div class="header-stats" id="stats">読み込み中…</div>
+        <button class="btn-token" id="token-btn" title="GitHub トークン設定">🔑</button>
+      </div>
     </header>
+
+    <div class="action-bar">
+      <button class="btn-quiz" id="quiz-btn" disabled>📝 今日の復習</button>
+    </div>
 
     <div class="search-bar">
       <input
@@ -51,7 +58,7 @@
     <footer class="footer">
       <a href="https://github.com/libraosang/nihongo-notebook" target="_blank" rel="noopener">GitHub</a>
       ・ Built with WorkBuddy 🌟
-      ・ <span style="color:var(--usuzumi-light);">Stage 2 · ブラウザ閲覧</span>
+      ・ <span style="color:var(--usuzumi-light);">v1.0 · Stage 4</span>
     </footer>
   </main>
 
@@ -59,6 +66,8 @@
     <div class="modal" id="modal-content"></div>
   </div>
 
-  <script src="assets/app.js"></script>
+  <div class="quiz-overlay" id="quiz-overlay"></div>
+
+  <script type="module" src="assets/app.js"></script>
 </body>
 </html>

@@ -1,10 +1,13 @@
 /* ========================================================
-   日本語学習ノート · App
+   日本語学習ノート · App (ES Module 版)
    - data/notes.json を fetch
    - 一覧 / 検索 / type フィルタ / タグフィルタ / 詳細モーダル
    - SRS 状態を表示（due / mastered ドット）
-   - URL ハッシュで状態保持
+   - クイズ機能（assets/quiz.js）と GitHub 書き戻し（assets/github.js）
    ======================================================== */
+
+import { startQuiz, openTokenSettings } from './quiz.js';
+import { hasToken } from './github.js';
 
 const TYPE_LABELS = {
   all:        { ja: 'すべて',   en: 'ALL' },
@@ -27,7 +30,6 @@ const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 /* ---------- データ読み込み ---------- */
 async function loadNotes() {
   try {
-    // commit SHA で破缓存（Pages の CDN 反映遅延対策）
     const res = await fetch('data/notes.json?v=' + Date.now(), { cache: 'no-cache' });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
@@ -41,6 +43,7 @@ async function loadNotes() {
       (err.message || err) + '</small></div>';
   }
 }
+window._reloadNotes = loadNotes;
 
 /* ---------- SRS ステータス判定 ---------- */
 function getSrsStatus(note) {
@@ -76,6 +79,7 @@ function render() {
   renderTagFilters();
   renderList();
   renderStats();
+  renderQuizButton();
 }
 
 function renderTabs() {
@@ -103,7 +107,6 @@ function renderTabs() {
 }
 
 function renderTagFilters() {
-  // 現在の type フィルタにマッチするノートからタグを集める
   const candidates = state.notes.filter((n) =>
     state.filter.type === 'all' || n.type === state.filter.type
   );
@@ -162,6 +165,19 @@ function renderStats() {
   const due = state.notes.filter((n) => getSrsStatus(n) === 'due').length;
   $('#stats').innerHTML =
     `<strong>${total}</strong>件 · <strong>${due}</strong>件復習待ち`;
+}
+
+function renderQuizButton() {
+  const due = state.notes.filter((n) => getSrsStatus(n) === 'due').length;
+  const btn = $('#quiz-btn');
+  if (!btn) return;
+  if (due === 0) {
+    btn.disabled = true;
+    btn.innerHTML = '🌸 復習なし';
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = `📝 今日の復習 <span class="badge-count">${due}</span>`;
+  }
 }
 
 /* ---------- 詳細モーダル ---------- */
@@ -225,6 +241,8 @@ function init() {
   $('#modal').addEventListener('click', (e) => {
     if (e.target.id === 'modal') closeModal();
   });
+  $('#quiz-btn')?.addEventListener('click', () => startQuiz());
+  $('#token-btn')?.addEventListener('click', () => openTokenSettings());
   loadNotes();
 }
 

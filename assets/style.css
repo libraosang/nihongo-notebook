@@ -416,3 +416,425 @@ a:hover { text-decoration: underline; }
   .modal { padding: 1.5rem 1.25rem; }
   .modal h2 { font-size: 1.5rem; }
 }
+
+/* ============================================
+   Stage 4: 復習機能 + Token 設定
+   ============================================ */
+
+/* ヘッダーの右側（stats + token ボタン） */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.btn-token {
+  background: transparent;
+  border: 1px solid var(--hai);
+  border-radius: var(--radius-sm);
+  width: 36px;
+  height: 36px;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--usuzumi);
+  transition: all 0.15s;
+}
+.btn-token:hover {
+  border-color: var(--akane);
+  color: var(--akane);
+}
+
+/* アクションバー（クイズ開始ボタン） */
+.action-bar {
+  margin-bottom: 1rem;
+}
+.btn-quiz {
+  width: 100%;
+  background: var(--akane);
+  color: var(--shironeri);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.85rem 1.25rem;
+  font-family: var(--sans);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.15s;
+  box-shadow: 0 2px 6px rgba(196, 56, 45, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.btn-quiz:hover:not(:disabled) {
+  background: var(--akane-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(196, 56, 45, 0.35);
+}
+.btn-quiz:disabled {
+  background: var(--hai);
+  color: var(--usuzumi);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+.btn-quiz .badge-count {
+  background: rgba(255, 255, 255, 0.25);
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+/* 共通ボタン */
+.btn-primary {
+  background: var(--akane);
+  color: var(--shironeri);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.65rem 1.25rem;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-primary:hover { background: var(--akane-dark); }
+.btn-link {
+  background: transparent;
+  border: none;
+  color: var(--akane);
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: var(--radius-sm);
+}
+.btn-link:hover { background: var(--kinari); }
+
+/* ====== クイズオーバーレイ ====== */
+.quiz-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 26, 0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 2vh 1rem;
+  z-index: 200;
+  overflow-y: auto;
+}
+.quiz-overlay.open { display: flex; }
+.quiz-stage {
+  background: var(--shironeri);
+  border-radius: var(--radius);
+  max-width: 560px;
+  width: 100%;
+  padding: 1.5rem 1.5rem 1.75rem;
+  box-shadow: var(--shadow-md);
+  margin: auto;
+}
+.quiz-summary-stage { padding: 2rem 1.5rem; }
+
+.quiz-loading, .quiz-error, .quiz-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  font-family: var(--sans);
+  color: var(--sumi-soft);
+}
+.quiz-empty .em { font-size: 3rem; margin-bottom: 0.5rem; }
+.quiz-empty h3 { font-family: var(--serif); margin-bottom: 0.4rem; }
+
+/* ヘッダー */
+.quiz-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.quiz-progress {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.progress-text {
+  font-family: var(--sans);
+  font-size: 0.8rem;
+  color: var(--usuzumi);
+  white-space: nowrap;
+}
+.progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--hai);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  display: block;
+  height: 100%;
+  background: var(--akane);
+  transition: width 0.3s ease;
+}
+.quiz-close {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--usuzumi);
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+}
+.quiz-close:hover { background: var(--kinari); color: var(--sumi); }
+
+/* メタ情報 */
+.quiz-meta {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+  font-family: var(--sans);
+}
+.badge {
+  display: inline-block;
+  padding: 0.18rem 0.6rem;
+  background: var(--kinari);
+  color: var(--usuzumi);
+  border-radius: var(--radius-sm);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+}
+.badge-q {
+  background: var(--akane);
+  color: var(--shironeri);
+}
+
+/* カード */
+.quiz-card {
+  background: var(--kinari);
+  border-radius: var(--radius);
+  border: 1px solid var(--hai);
+  overflow: hidden;
+}
+.quiz-front, .quiz-back {
+  padding: 2rem 1.5rem;
+}
+.quiz-back { display: none; }
+.quiz-card.flipped .quiz-front { display: none; }
+.quiz-card.flipped .quiz-back { display: block; }
+
+.quiz-prompt {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--usuzumi);
+  margin-bottom: 1rem;
+  text-align: center;
+  letter-spacing: 0.05em;
+}
+.quiz-question {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1.75rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+.quiz-flip-btn {
+  display: block;
+  margin: 0 auto;
+  background: var(--shironeri);
+  border: 1px solid var(--akane);
+  color: var(--akane);
+  border-radius: var(--radius);
+  padding: 0.65rem 1.5rem;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.quiz-flip-btn:hover {
+  background: var(--akane);
+  color: var(--shironeri);
+}
+
+/* 答え面 */
+.quiz-answer-label {
+  font-family: var(--sans);
+  font-size: 0.7rem;
+  color: var(--usuzumi);
+  letter-spacing: 0.15em;
+  text-align: center;
+  margin-bottom: 0.4rem;
+}
+.quiz-answer {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 0.3rem;
+  color: var(--akane);
+  white-space: pre-wrap;
+}
+.quiz-answer-kana {
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  color: var(--usuzumi);
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+.quiz-example {
+  background: var(--shironeri);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--akane-light);
+  margin-bottom: 1rem;
+  font-family: var(--sans);
+}
+.quiz-example .ja {
+  font-family: var(--serif);
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+}
+.quiz-example .zh {
+  font-size: 0.85rem;
+  color: var(--usuzumi);
+}
+.quiz-note {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--sumi-soft);
+  background: rgba(196, 56, 45, 0.06);
+  padding: 0.6rem 0.85rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1.25rem;
+}
+
+/* 評点ボタン */
+.quiz-grades {
+  margin-top: 1.25rem;
+}
+.quiz-grade-label {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--sumi-soft);
+  text-align: center;
+  margin-bottom: 0.6rem;
+}
+.quiz-grade-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
+}
+.grade-btn {
+  background: var(--shironeri);
+  border: 1px solid var(--hai);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.4rem;
+  font-family: var(--sans);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--sumi);
+}
+.grade-btn small {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 400;
+  color: var(--usuzumi);
+  margin-top: 0.15rem;
+  letter-spacing: 0.02em;
+}
+.grade-btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+.grade-btn.grade-0:hover { border-color: var(--akane); color: var(--akane); }
+.grade-btn.grade-3:hover { border-color: var(--kuchiba); color: var(--kuchiba); }
+.grade-btn.grade-4:hover { border-color: var(--moegi); color: var(--moegi); }
+.grade-btn.grade-5:hover { border-color: var(--moegi); background: var(--moegi); color: var(--shironeri); }
+
+/* サマリー */
+.quiz-summary { text-align: center; }
+.quiz-summary h2 {
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+.summary-stats .stat {
+  background: var(--kinari);
+  padding: 1rem 0.5rem;
+  border-radius: var(--radius);
+}
+.summary-stats .stat-num {
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--akane);
+  margin-bottom: 0.1rem;
+}
+.summary-stats .stat-label {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--usuzumi);
+  letter-spacing: 0.05em;
+}
+.quiz-saved {
+  color: var(--moegi);
+  font-family: var(--sans);
+  font-size: 0.9rem;
+  padding: 0.6rem 0;
+  margin-bottom: 1rem;
+}
+.quiz-warn {
+  background: rgba(196, 56, 45, 0.08);
+  color: var(--akane-dark);
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+/* セットアップガイド */
+.quiz-setup h2 {
+  font-family: var(--serif);
+  font-size: 1.4rem;
+  margin-bottom: 0.75rem;
+}
+.quiz-setup p {
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  color: var(--sumi-soft);
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.setup-steps {
+  font-family: var(--sans);
+  font-size: 0.88rem;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--sumi-soft);
+}
+.setup-steps li { margin-bottom: 0.5rem; line-height: 1.5; }
+.setup-steps code {
+  background: var(--kinari);
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.85em;
+  color: var(--akane);
+}
+
+@media (max-width: 480px) {
+  .quiz-stage { padding: 1.25rem 1rem 1.5rem; }
+  .quiz-front, .quiz-back { padding: 1.5rem 1rem; }
+  .quiz-question { font-size: 1.3rem; }
+  .quiz-answer { font-size: 1.25rem; }
+  .grade-btn { font-size: 1rem; padding: 0.55rem 0.3rem; }
+  .summary-stats { gap: 0.4rem; }
+  .summary-stats .stat-num { font-size: 1.3rem; }
+}

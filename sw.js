@@ -4,13 +4,16 @@
    - data/notes.json はネットワークファースト（更新を素早く反映）
    ======================================================== */
 
-const CACHE_NAME = 'nihongo-notebook-v2-stage2';
+const CACHE_NAME = 'nihongo-notebook-v3-stage4';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './assets/style.css',
   './assets/app.js',
+  './assets/srs.js',
+  './assets/github.js',
+  './assets/quiz.js',
   './assets/icon.svg',
 ];
 
@@ -34,6 +37,9 @@ self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
+
+  // GitHub API は SW で扱わない（認証ヘッダ・リアルタイム性のため）
+  if (url.hostname === 'api.github.com') return;
 
   // データ JSON: ネットワーク優先（オフライン時のみキャッシュ）
   if (url.pathname.includes('/data/') && url.pathname.endsWith('.json')) {
