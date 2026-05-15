@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#c4382d">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="日本語ノート">
+  <meta name="apple-mobile-web-app-title" content="日语笔记">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <title>日本語学習ノート · Nihongo Notebook</title>
+  <title>日语学习笔记本 · Nihongo Notebook</title>
 
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="assets/icon.svg">
@@ -24,18 +24,19 @@
       <div class="brand">
         <div class="seal">学</div>
         <div class="brand-text">
-          <h1>日本語学習ノート</h1>
+          <h1>日语学习笔记本</h1>
           <div class="sub">NIHONGO NOTEBOOK</div>
         </div>
       </div>
       <div class="header-right">
-        <div class="header-stats" id="stats">読み込み中…</div>
-        <button class="btn-token" id="token-btn" title="GitHub トークン設定">🔑</button>
+        <div class="header-stats" id="stats">加载中…</div>
+        <button class="btn-token" id="token-btn" title="GitHub Token 设置">🔑</button>
       </div>
     </header>
 
     <div class="action-bar">
-      <button class="btn-quiz" id="quiz-btn" disabled>📝 今日の復習</button>
+      <button class="btn-quiz" id="quiz-btn" disabled>📝 今日复习</button>
+      <button class="btn-add" id="add-btn">＋ 添加笔记</button>
     </div>
 
     <div class="search-bar">
@@ -43,7 +44,7 @@
         type="search"
         id="search-input"
         class="search-input"
-        placeholder="検索 — 単語、読み、意味、例文、タグから…"
+        placeholder="搜索 — 单词、假名、释义、例句、标签…"
         autocomplete="off"
         spellcheck="false">
     </div>
@@ -52,20 +53,27 @@
     <div class="tag-filters" id="tag-filters"></div>
 
     <div class="notes-list" id="notes-list">
-      <div class="empty"><div class="em">⌛</div>読み込み中…</div>
+      <div class="empty"><div class="em">⌛</div>加载中…</div>
     </div>
 
     <footer class="footer">
       <a href="https://github.com/libraosang/nihongo-notebook" target="_blank" rel="noopener">GitHub</a>
-      ・ Built with WorkBuddy 🌟
-      ・ <span style="color:var(--usuzumi-light);">v1.0 · Stage 4</span>
+      · Built with WorkBuddy 🌟
+      · <span style="color:var(--usuzumi-light);">v1.1</span>
     </footer>
   </main>
 
+  <!-- 笔记详情 Modal -->
   <div class="modal-backdrop" id="modal">
     <div class="modal" id="modal-content"></div>
   </div>
 
+  <!-- 添加笔记 Modal -->
+  <div class="modal-backdrop" id="add-modal">
+    <div class="modal add-modal-body" id="add-modal-content"></div>
+  </div>
+
+  <!-- 复习答题 Overlay -->
   <div class="quiz-overlay" id="quiz-overlay"></div>
 
   <script type="module" src="assets/app.js"></script>

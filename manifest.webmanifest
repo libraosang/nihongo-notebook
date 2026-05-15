@@ -1,8 +1,8 @@
 {
-  "name": "日本語学習ノート",
-  "short_name": "日本語ノート",
-  "description": "個人日本語学習用ノート — SRS 間隔重復対応",
-  "lang": "ja",
+  "name": "日语学习笔记本",
+  "short_name": "日语笔记",
+  "description": "个人日语学习笔记本 — SRS 间隔重复·AI 对话录入·每日自动出题",
+  "lang": "zh-CN",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

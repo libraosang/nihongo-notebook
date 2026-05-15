@@ -1,90 +1,72 @@
 /* ========================================================
-   答題機能 · クイズ UI コントローラー
-   - 今日の due 笔记をシャッフルしてカードスタックに
-   - 表 → 翻面 → 4 段階評点（5 / 4 / 3 / 0）
-   - SM-2 で SRS を更新し、log.json に履歴を追加
-   - すべて GitHub Contents API 経由で書き戻す
+   日语学习笔记本 · 答题 UI 控制器
+   v1.1 — 简体中文 UI
    ======================================================== */
 
 import { grade as srsGrade } from './srs.js';
 import { hasToken, getFile, updateFile, verifyToken } from './github.js';
 
-const TYPE_LABELS_EN = {
-  word: 'WORD', phrase: 'PHRASE', grammar: 'GRAMMAR',
-  expression: 'EXPRESSION', culture: 'CULTURE',
+const i18n = () => window._quizI18n || {};
+
+const TYPE_ZH = {
+  word: '单词', phrase: '句型', grammar: '语法',
+  expression: '表达', culture: '文化',
 };
 
 const state = {
   queue: [],
   index: 0,
-  results: [],          // [{id, score, ts, ...}]
+  results: [],
   flipped: false,
-  noteSha: null,
-  logSha: null,
 };
 
-const $ = (s) => document.querySelector(s);
+const $ = s => document.querySelector(s);
 
-/* ---------- 起動 ---------- */
+/* ===== 启动 ===== */
 export async function startQuiz() {
-  // Token 検証
-  if (!hasToken()) {
-    return showSetup('GitHub トークンが必要です');
-  }
+  if (!hasToken()) return showSetup('需要 GitHub Token 才能写回答题结果');
   const v = await verifyToken();
-  if (!v.ok) {
-    return showSetup('トークンが無効です: ' + (v.error || ''));
-  }
-  if (!v.permissions?.push) {
-    return showSetup('このトークンには書き込み権限がありません。Contents: Read & Write を有効にしてください。');
-  }
+  if (!v.ok)          return showSetup('Token 无效：' + (v.error || ''));
+  if (!v.permissions?.push) return showSetup('该 Token 没有写权限，请开启 Contents: Read & Write');
 
-  // データ取得
-  showOverlay('<div class="quiz-loading">📚 復習問題を準備中…</div>');
+  showOverlay(`<div class="quiz-loading">📚 正在准备今日复习…</div>`);
+
   let notesData;
   try {
     const res = await getFile('data/notes.json');
     notesData = res.json;
-    state.noteSha = res.sha;
   } catch (e) {
     return showOverlay(
-      `<div class="quiz-error">⚠ データの取得に失敗しました<br><small>${e.message}</small><br><br>` +
-      `<button class="btn-primary" onclick="document.getElementById('quiz-overlay').classList.remove('open')">閉じる</button></div>`
+      `<div class="quiz-error">⚠ 数据加载失败<br><small>${esc(e.message)}</small><br><br>` +
+      `<button class="btn-primary" onclick="document.getElementById('quiz-overlay').classList.remove('open')">关闭</button></div>`
     );
   }
 
   const today = new Date().toISOString().slice(0, 10);
-  const due = (notesData.notes || []).filter((n) =>
-    (n.srs?.next_review || '9999-12-31') <= today
-  );
+  const due = (notesData.notes || []).filter(n => (n.srs?.next_review || '9999-12-31') <= today);
 
-  if (due.length === 0) {
+  if (!due.length) {
     return showOverlay(`
       <div class="quiz-empty">
         <div class="em">🌸</div>
-        <h3>今日は復習対象がありません</h3>
-        <p>お疲れ様でした！</p>
-        <button class="btn-primary" onclick="document.getElementById('quiz-overlay').classList.remove('open')">閉じる</button>
+        <h3>今日没有待复习的内容</h3>
+        <p>继续加油！</p>
+        <button class="btn-primary" onclick="document.getElementById('quiz-overlay').classList.remove('open')">关闭</button>
       </div>`);
   }
 
-  // シャッフルして state に積む
   shuffle(due);
-  state.queue = due;
-  state.index = 0;
-  state.results = [];
-  state.flipped = false;
+  Object.assign(state, { queue: due, index: 0, results: [], flipped: false });
   renderCard();
 }
 
-/* ---------- カード描画 ---------- */
+/* ===== 卡片渲染 ===== */
 function renderCard() {
   const note = state.queue[state.index];
   if (!note) return finishQuiz();
-
   const total = state.queue.length;
-  const idx = state.index + 1;
-  const qType = chooseQuestionType(note);
+  const idx   = state.index + 1;
+  const qType = chooseQType(note);
 
   $('#quiz-overlay').classList.add('open');
   $('#quiz-overlay').innerHTML = `
@@ -92,277 +74,194 @@ function renderCard() {
       <div class="quiz-header">
         <div class="quiz-progress">
           <span class="progress-text">${idx} / ${total}</span>
-          <span class="progress-bar"><span class="progress-fill" style="width:${(idx/total)*100}%"></span></span>
+          <span class="progress-bar"><span class="progress-fill" style="width:${idx/total*100}%"></span></span>
         </div>
-        <button class="quiz-close" aria-label="やめる">×</button>
+        <button class="quiz-close" aria-label="结束">×</button>
       </div>
       <div class="quiz-meta">
-        <span class="badge">${TYPE_LABELS_EN[note.type] || note.type}</span>
+        <span class="badge">${TYPE_ZH[note.type] || note.type}</span>
         <span class="badge badge-q">${qType.label}</span>
       </div>
       <div class="quiz-card ${state.flipped ? 'flipped' : ''}">
         <div class="quiz-front">
-          <div class="quiz-prompt">${escapeHtml(qType.prompt)}</div>
-          <div class="quiz-question">${escapeHtml(qType.question)}</div>
-          <button class="quiz-flip-btn">答えを見る ⤵</button>
+          <div class="quiz-prompt">${esc(qType.prompt)}</div>
+          <div class="quiz-question">${esc(qType.question)}</div>
+          <button class="quiz-flip-btn">查看答案 ⤵</button>
         </div>
         <div class="quiz-back">
-          <div class="quiz-answer-label">正答</div>
-          <div class="quiz-answer">${escapeHtml(qType.answer)}</div>
-          ${qType.kana && qType.kana !== qType.answer ? `<div class="quiz-answer-kana">${escapeHtml(qType.kana)}</div>` : ''}
+          <div class="quiz-answer-label">正确答案</div>
+          <div class="quiz-answer">${esc(qType.answer)}</div>
+          ${qType.kana && qType.kana !== qType.answer ? `<div class="quiz-answer-kana">${esc(qType.kana)}</div>` : ''}
           ${note.examples?.[0] ? `
             <div class="quiz-example">
-              <div class="ja">${escapeHtml(note.examples[0].ja || '')}</div>
-              ${note.examples[0].zh ? `<div class="zh">${escapeHtml(note.examples[0].zh)}</div>` : ''}
+              <div class="ja">${esc(note.examples[0].ja || '')}</div>
+              ${note.examples[0].zh ? `<div class="zh">${esc(note.examples[0].zh)}</div>` : ''}
             </div>` : ''}
-          ${note.context_note ? `<div class="quiz-note">💡 ${escapeHtml(note.context_note)}</div>` : ''}
+          ${note.context_note ? `<div class="quiz-note">💡 ${esc(note.context_note)}</div>` : ''}
           <div class="quiz-grades">
-            <div class="quiz-grade-label">どうでしたか？</div>
+            <div class="quiz-grade-label">掌握程度？</div>
             <div class="quiz-grade-buttons">
-              <button class="grade-btn grade-0" data-score="0">0<br><small>忘れた</small></button>
-              <button class="grade-btn grade-3" data-score="3">3<br><small>考えた</small></button>
-              <button class="grade-btn grade-4" data-score="4">4<br><small>普通</small></button>
+              <button class="grade-btn grade-0" data-score="0">0<br><small>完全忘了</small></button>
+              <button class="grade-btn grade-3" data-score="3">3<br><small>想起来了</small></button>
+              <button class="grade-btn grade-4" data-score="4">4<br><small>正常</small></button>
               <button class="grade-btn grade-5" data-score="5">5<br><small>秒答</small></button>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  `;
+    </div>`;
 
-  $('.quiz-flip-btn').addEventListener('click', () => {
-    state.flipped = true;
-    renderCard();
-  });
+  $('.quiz-flip-btn').addEventListener('click', () => { state.flipped = true; renderCard(); });
   $('.quiz-close').addEventListener('click', () => {
-    if (confirm('途中でやめますか？ここまでの結果は保存されます。')) finishQuiz();
+    if (confirm('中途退出？已答的结果会保存。')) finishQuiz();
   });
-  document.querySelectorAll('.grade-btn').forEach((btn) => {
-    btn.addEventListener('click', () => onGrade(parseInt(btn.dataset.score, 10), qType));
-  });
+  document.querySelectorAll('.grade-btn').forEach(btn =>
+    btn.addEventListener('click', () => onGrade(parseInt(btn.dataset.score, 10), qType))
+  );
 }
 
-/* ---------- 出題タイプの選択 ---------- */
-function chooseQuestionType(note) {
-  // grammar / culture は知識点考查（簡易版：意味と例文を問う）
+/* ===== 题型路由 ===== */
+function chooseQType(note) {
   if (note.type === 'grammar' || note.type === 'culture') {
-    return {
-      label: '知識点',
-      prompt: '次の項目について、意味と使い方を思い出してください。',
-      question: note.front,
-      answer: note.back,
-      kana: note.kana,
-    };
+    return { label: '知识点', prompt: '请回忆该项目的含义与用法：', question: note.front, answer: note.back, kana: note.kana };
   }
-  // word / phrase / expression は中訳日 / 日訳中 を交互に
-  const direction = state.index % 2 === 0 ? 'cn2jp' : 'jp2cn';
-  if (direction === 'cn2jp') {
-    return {
-      label: '中訳日',
-      prompt: '中国語に対応する日本語は？',
-      question: note.back,
-      answer: note.front,
-      kana: note.kana,
-    };
+  if (state.index % 2 === 0) {
+    return { label: '中→日', prompt: '中文意思对应的日语是？', question: note.back, answer: note.front, kana: note.kana };
   }
-  return {
-    label: '日訳中',
-    prompt: 'この日本語の意味は？',
-    question: note.front + (note.kana && note.kana !== note.front ? `\n（${note.kana}）` : ''),
-    answer: note.back,
-    kana: '',
-  };
+  return { label: '日→中', prompt: '这个日语的意思是？', question: note.front + (note.kana && note.kana !== note.front ? `\n（${note.kana}）` : ''), answer: note.back, kana: '' };
 }
 
-/* ---------- 採点処理 ---------- */
+/* ===== 评分 ===== */
 async function onGrade(score, qType) {
-  const note = state.queue[state.index];
   state.results.push({
-    id: note.id,
-    score,
+    id: state.queue[state.index].id, score,
     ts: new Date().toISOString(),
-    question_type: qType.label === '中訳日' ? 'cn2jp' : qType.label === '日訳中' ? 'jp2cn' : 'knowledge',
+    question_type: qType.label === '中→日' ? 'cn2jp' : qType.label === '日→中' ? 'jp2cn' : 'knowledge',
   });
   state.index++;
   state.flipped = false;
-  if (state.index >= state.queue.length) {
-    finishQuiz();
-  } else {
-    renderCard();
-  }
+  state.index >= state.queue.length ? finishQuiz() : renderCard();
 }
 
-/* ---------- 終了処理（GitHub に書き戻す） ---------- */
+/* ===== 结束 & 写回 ===== */
 async function finishQuiz() {
-  if (state.results.length === 0) {
-    $('#quiz-overlay').classList.remove('open');
-    return;
-  }
-  showOverlay('<div class="quiz-loading">💾 結果を GitHub に保存中…</div>');
+  if (!state.results.length) { $('#quiz-overlay').classList.remove('open'); return; }
+  showOverlay('<div class="quiz-loading">💾 正在写回 GitHub…</div>');
 
-  let saveError = null;
+  let err = null;
   try {
-    // 1) notes.json の SRS を更新
-    await updateFile('data/notes.json', (data) => {
-      const today = new Date().toISOString().slice(0, 10);
-      const idMap = new Map(state.results.map((r) => [r.id, r]));
-      data.notes = data.notes.map((n) => {
+    await updateFile('data/notes.json', data => {
+      const today  = new Date().toISOString().slice(0, 10);
+      const idMap  = new Map(state.results.map(r => [r.id, r]));
+      data.notes   = data.notes.map(n => {
         const r = idMap.get(n.id);
-        if (!r) return n;
-        return { ...n, srs: srsGrade(n.srs || {}, r.score, today) };
+        return r ? { ...n, srs: srsGrade(n.srs || {}, r.score, today) } : n;
       });
       data.updated_at = new Date().toISOString();
       return data;
-    }, `quiz: ${new Date().toISOString().slice(0,10)} (${countOk(state.results)}/${state.results.length} via web)`);
+    }, `quiz: ${new Date().toISOString().slice(0,10)} (${countOk()}/${state.results.length} web)`);
 
-    // 2) log.json に履歴を追加
-    await updateFile('data/log.json', (data) => {
+    await updateFile('data/log.json', data => {
       data.entries = data.entries || [];
-      for (const r of state.results) {
-        data.entries.push({
-          id: r.id,
-          date: r.ts,
-          score: r.score,
-          via: 'web',
-          question_type: r.question_type,
-        });
-      }
+      state.results.forEach(r => data.entries.push({ id: r.id, date: r.ts, score: r.score, via: 'web', question_type: r.question_type }));
       return data;
-    }, `log: web quiz ${new Date().toISOString().slice(0,10)} (+${state.results.length} entries)`);
-  } catch (e) {
-    saveError = e;
-  }
+    }, `log: web quiz ${new Date().toISOString().slice(0,10)} (+${state.results.length})`);
+  } catch (e) { err = e; }
 
-  showSummary(saveError);
+  showSummary(err);
 }
 
-function countOk(results) {
-  return results.filter((r) => r.score >= 3).length;
-}
+function countOk() { return state.results.filter(r => r.score >= 3).length; }
 
 function showSummary(err) {
-  const ok = countOk(state.results);
-  const total = state.results.length;
-  const pct = Math.round((ok / total) * 100);
-  const avg = (state.results.reduce((a, r) => a + r.score, 0) / total).toFixed(1);
-
-  const errBlock = err ? `
-    <div class="quiz-warn">
-      ⚠ GitHub への保存に失敗しました: ${escapeHtml(err.message || '')}<br>
-      <small>結果はローカルに保持されています。再試行: <button class="btn-link" id="retry-save">保存しなおす</button></small>
-    </div>` : '<div class="quiz-saved">✓ GitHub に保存しました</div>';
+  const ok    = countOk(), total = state.results.length;
+  const pct   = Math.round(ok / total * 100);
+  const avg   = (state.results.reduce((a, r) => a + r.score, 0) / total).toFixed(1);
+  const saved = err
+    ? `<div class="quiz-warn">⚠ 写回失败：${esc(err.message || '')}
+         <br><small>结果仍在本地，可重试：<button class="btn-link" id="retry-save">重试保存</button></small></div>`
+    : '<div class="quiz-saved">✓ 已同步到 GitHub</div>';
 
   $('#quiz-overlay').innerHTML = `
     <div class="quiz-stage quiz-summary-stage">
       <div class="quiz-summary">
-        <h2>🎯 お疲れ様でした</h2>
+        <h2>🎯 本次复习结果</h2>
         <div class="summary-stats">
-          <div class="stat"><div class="stat-num">${ok}/${total}</div><div class="stat-label">正解</div></div>
-          <div class="stat"><div class="stat-num">${pct}%</div><div class="stat-label">正解率</div></div>
-          <div class="stat"><div class="stat-num">${avg}</div><div class="stat-label">平均評点</div></div>
+          <div class="stat"><div class="stat-num">${ok}/${total}</div><div class="stat-label">正确</div></div>
+          <div class="stat"><div class="stat-num">${pct}%</div><div class="stat-label">正确率</div></div>
+          <div class="stat"><div class="stat-num">${avg}</div><div class="stat-label">平均分</div></div>
         </div>
-        ${errBlock}
-        <button class="btn-primary" id="quiz-done">閉じる</button>
+        ${saved}
+        <button class="btn-primary" id="quiz-done">关闭</button>
       </div>
     </div>`;
   $('#quiz-done').addEventListener('click', () => {
     $('#quiz-overlay').classList.remove('open');
-    // データを再読み込み（メイン画面の表示を更新）
     if (window._reloadNotes) window._reloadNotes();
   });
-  if (err) {
-    $('#retry-save')?.addEventListener('click', finishQuiz);
-  }
+  if (err) $('#retry-save')?.addEventListener('click', finishQuiz);
 }
 
-/* ---------- セットアップガイド ---------- */
-function showSetup(msg = '') {
+/* ===== Token 设置 ===== */
+export function openTokenSettings() {
   showOverlay(`
     <div class="quiz-stage">
       <div class="quiz-setup">
-        <h2>🔑 GitHub トークン設定</h2>
-        ${msg ? `<div class="quiz-warn">${escapeHtml(msg)}</div>` : ''}
-        <p>答題結果を GitHub に保存するために、Fine-grained Personal Access Token が必要です。</p>
+        <h2>🔑 GitHub Token 设置</h2>
+        <p>需要 Fine-grained Personal Access Token 将答题结果写回 GitHub。</p>
         <ol class="setup-steps">
-          <li><a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">こちらをクリック</a> して新しい Fine-grained PAT を作成します。</li>
-          <li><strong>Repository access</strong>: "Only select repositories" → <code>libraosang/nihongo-notebook</code> のみ選択</li>
-          <li><strong>Permissions → Repository permissions</strong>:<br>
-            ・<code>Contents</code>: <strong>Read and write</strong></li>
-          <li>有効期限はお好み（30 日 / 90 日 / 無期限）</li>
-          <li>「Generate token」ボタンを押し、表示された <code>github_pat_…</code> をコピー</li>
-          <li>↓ に貼り付けて保存</li>
+          <li>打开 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub Personal Access Tokens 页面</a></li>
+          <li><strong>Repository access</strong>：仅选择 <code>libraosang/nihongo-notebook</code></li>
+          <li><strong>Repository permissions</strong> → <strong>Contents</strong>：设为 <strong>Read and write</strong></li>
+          <li>点击 Generate token，复制 <code>github_pat_…</code> 开头的 Token</li>
+          <li>粘贴到下方</li>
         </ol>
         <input type="password" id="pat-input" class="search-input" placeholder="github_pat_..." style="width:100%;margin-top:1rem;">
-        <div style="margin-top:0.75rem;display:flex;gap:0.5rem;">
-          <button class="btn-primary" id="pat-save">検証して保存</button>
-          <button class="btn-link" id="pat-cancel">キャンセル</button>
+        <div style="margin-top:.75rem;display:flex;gap:.5rem;">
+          <button class="btn-primary" id="pat-save">验证并保存</button>
+          <button class="btn-link"    id="pat-cancel">取消</button>
         </div>
-        <div id="pat-msg" style="margin-top:0.75rem;font-family:var(--sans);font-size:0.85rem;"></div>
+        <div id="pat-msg" style="margin-top:.75rem;font-family:var(--sans);font-size:.85rem;"></div>
       </div>
     </div>`);
+
   $('#pat-save').addEventListener('click', async () => {
     const t = $('#pat-input').value.trim();
-    if (!t) { $('#pat-msg').innerHTML = '<span style="color:var(--akane);">トークンを入力してください</span>'; return; }
-    $('#pat-msg').innerHTML = '🔍 検証中…';
+    if (!t) { $('#pat-msg').innerHTML = '<span style="color:var(--akane);">请输入 Token</span>'; return; }
+    $('#pat-msg').innerHTML = '🔍 验证中…';
     const v = await verifyToken(t);
-    if (!v.ok) {
-      $('#pat-msg').innerHTML = `<span style="color:var(--akane);">⚠ ${escapeHtml(v.error)}</span>`;
-      return;
-    }
-    if (!v.permissions?.push) {
-      $('#pat-msg').innerHTML = `<span style="color:var(--akane);">⚠ 書き込み権限がありません</span>`;
-      return;
-    }
-    // 保存
+    if (!v.ok) { $('#pat-msg').innerHTML = `<span style="color:var(--akane);">⚠ ${esc(v.error)}</span>`; return; }
+    if (!v.permissions?.push) { $('#pat-msg').innerHTML = `<span style="color:var(--akane);">⚠ 没有写权限</span>`; return; }
     localStorage.setItem('nihongo:gh:pat', t);
-    $('#pat-msg').innerHTML = '<span style="color:var(--moegi);">✓ 保存しました。クイズを開始します…</span>';
+    $('#pat-msg').innerHTML = '<span style="color:var(--moegi);">✓ 已保存，正在跳转…</span>';
     setTimeout(() => startQuiz(), 600);
   });
-  $('#pat-cancel').addEventListener('click', () => {
-    $('#quiz-overlay').classList.remove('open');
-  });
+  $('#pat-cancel').addEventListener('click', () => $('#quiz-overlay').classList.remove('open'));
 }
 
-/* ---------- ヘルパー ---------- */
-function showOverlay(html) {
-  const el = $('#quiz-overlay');
-  el.innerHTML = html;
-  el.classList.add('open');
-}
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, (c) => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  }[c]));
-}
-function shuffle(arr) {
-  for (let i = arr.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
-  }
-}
-
-/* ---------- 設定画面（既存トークンの管理） ---------- */
-export function openTokenSettings() {
-  const current = localStorage.getItem('nihongo:gh:pat');
-  const masked = current ? current.slice(0, 12) + '…' + current.slice(-4) : '（未設定）';
+export function openTokenManagement() {
+  const cur    = localStorage.getItem('nihongo:gh:pat');
+  const masked = cur ? cur.slice(0, 12) + '…' + cur.slice(-4) : '（未设置）';
   showOverlay(`
     <div class="quiz-stage">
       <div class="quiz-setup">
-        <h2>🔑 トークン管理</h2>
-        <p>現在のトークン: <code>${escapeHtml(masked)}</code></p>
-        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
-          <button class="btn-primary" id="pat-renew">新しいトークンを設定</button>
-          <button class="btn-link" id="pat-delete">削除</button>
-          <button class="btn-link" id="pat-close">閉じる</button>
+        <h2>🔑 Token 管理</h2>
+        <p>当前 Token：<code>${esc(masked)}</code></p>
+        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+          <button class="btn-primary" id="pat-renew">重新设置</button>
+          <button class="btn-link"    id="pat-delete">删除</button>
+          <button class="btn-link"    id="pat-close">关闭</button>
         </div>
       </div>
     </div>`);
-  $('#pat-renew').addEventListener('click', () => showSetup());
+  $('#pat-renew').addEventListener('click', () => openTokenSettings());
   $('#pat-delete').addEventListener('click', () => {
-    if (confirm('トークンを削除しますか？')) {
-      localStorage.removeItem('nihongo:gh:pat');
-      $('#quiz-overlay').classList.remove('open');
-    }
+    if (confirm('确认删除 Token？')) { localStorage.removeItem('nihongo:gh:pat'); $('#quiz-overlay').classList.remove('open'); }
   });
   $('#pat-close').addEventListener('click', () => $('#quiz-overlay').classList.remove('open'));
 }
+
+/* ===== 工具 ===== */
+function showOverlay(html) { const el = $('#quiz-overlay'); el.innerHTML = html; el.classList.add('open'); }
+function esc(s) { return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function shuffle(arr) { for (let i = arr.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i+1)); [arr[i], arr[j]] = [arr[j], arr[i]]; } }

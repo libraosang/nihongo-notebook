@@ -838,3 +838,137 @@ a:hover { text-decoration: underline; }
   .summary-stats { gap: 0.4rem; }
   .summary-stats .stat-num { font-size: 1.3rem; }
 }
+
+/* ============================================
+   添加笔记 Modal + 表单
+   ============================================ */
+
+/* action-bar 双按钮布局 */
+.action-bar {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  align-items: stretch;
+}
+.btn-add {
+  background: var(--shironeri);
+  border: 1.5px solid var(--akane);
+  color: var(--akane);
+  border-radius: var(--radius);
+  padding: 0 1.25rem;
+  font-family: var(--sans);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.btn-add:hover {
+  background: var(--akane);
+  color: var(--shironeri);
+}
+@media (max-width: 480px) {
+  .action-bar { grid-template-columns: 1fr; }
+  .btn-add { padding: 0.75rem; text-align: center; }
+}
+
+/* 添加笔记 Modal 容器 */
+.add-modal-body {
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* 表单通用 */
+.add-form { display: flex; flex-direction: column; gap: 0; }
+.form-row { margin-bottom: 1rem; }
+.form-row-half {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.65rem;
+}
+.form-label {
+  display: block;
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--usuzumi);
+  letter-spacing: 0.12em;
+  margin-bottom: 0.3rem;
+}
+.form-label .req { color: var(--akane); }
+.form-input {
+  width: 100%;
+  padding: 0.6rem 0.85rem;
+  font-family: var(--sans);
+  font-size: 0.92rem;
+  background: var(--shironeri);
+  border: 1px solid var(--hai);
+  border-radius: var(--radius-sm);
+  color: var(--sumi);
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+.form-input:focus { border-color: var(--akane); }
+textarea.form-input { resize: vertical; min-height: 64px; line-height: 1.5; }
+select.form-input { cursor: pointer; }
+.form-hint {
+  margin-top: 0.3rem;
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  color: var(--usuzumi-light);
+  line-height: 1.5;
+}
+
+/* 例句行 */
+.example-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 0.4rem;
+  margin-bottom: 0.4rem;
+  align-items: center;
+}
+.example-row:only-child { grid-template-columns: 1fr 1fr; }
+.btn-remove-ex {
+  background: transparent;
+  border: none;
+  color: var(--usuzumi);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 0.3rem;
+  border-radius: var(--radius-sm);
+}
+.btn-remove-ex:hover { color: var(--akane); background: var(--kinari); }
+.add-example-btn {
+  font-size: 0.82rem;
+  padding: 0.25rem 0;
+  color: var(--akane);
+}
+
+/* 表单消息 */
+.form-msg {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-sm);
+  margin-bottom: 0.75rem;
+}
+.form-msg-error { background: rgba(196,56,45,.08); color: var(--akane-dark); }
+.form-msg-ok    { background: rgba(90,138,58,.1);  color: var(--moegi); }
+.form-msg-info  { background: var(--kinari);        color: var(--usuzumi); }
+
+/* 表单底部按钮 */
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding-top: 0.25rem;
+}
+
+@media (max-width: 480px) {
+  .form-row-half  { grid-template-columns: 1fr; }
+  .example-row    { grid-template-columns: 1fr 1fr; }
+  .example-row .btn-remove-ex { display: none; }
+  .add-modal-body { max-height: 95vh; }
+}
