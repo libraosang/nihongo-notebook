@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-05-16T15:46:46.410Z",
+  "updated_at": "2026-05-16T15:49:08.685Z",
   "notes": [
     {
       "type": "word",
@@ -28,11 +28,11 @@
       "id": "20260516-001",
       "created_at": "2026-05-16T14:43:30+00:00",
       "srs": {
-        "interval": 1,
-        "ease": 2.6,
-        "reps": 1,
+        "interval": 6,
+        "ease": 2.7,
+        "reps": 2,
         "lapses": 0,
-        "next_review": "2026-05-16",
+        "next_review": "2026-05-21",
         "last_review": "2026-05-16"
       }
     },
@@ -69,12 +69,12 @@
       "context_note": "振り落とす是他动词形式（主动），表示'甩掉、淘汰某人'；振り落とされる是被动形式，表示'被淘汰、不合格'。常用于竞争、考试、选拔等场景。注意与'脱落する'（脱落）的区别——前者强调被动的淘汰，后者强调物理上的脱落。",
       "created_at": "2026-05-16T15:41:28.745Z",
       "srs": {
-        "interval": 0,
+        "interval": 1,
         "ease": 2.5,
-        "reps": 0,
+        "reps": 1,
         "lapses": 0,
         "next_review": "2026-05-16",
-        "last_review": null
+        "last_review": "2026-05-16"
       }
     },
     {
@@ -108,12 +108,12 @@
       "context_note": "有两个主要用法：①作为他动词表示'募集、招募'（如募る人員）；②作为自动词表示某种感情、情绪逐渐加强、增加。例句中'不安が募る'是自动词用法，意思是'不安的情绪越来越强'。",
       "created_at": "2026-05-16T15:46:46.410Z",
       "srs": {
-        "interval": 0,
+        "interval": 1,
         "ease": 2.5,
-        "reps": 0,
+        "reps": 1,
         "lapses": 0,
         "next_review": "2026-05-16",
-        "last_review": null
+        "last_review": "2026-05-16"
       }
     }
   ]
