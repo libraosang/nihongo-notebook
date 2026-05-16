@@ -39,11 +39,11 @@
       ```
    c. 从 `data/pending.json` 的 `pending` 数组中移除该条（用 Edit 工具）。
 
-5. 全部处理完毕后，一次性 commit + push：
+5. 全部处理完毕后，一次性 commit + push 到 main：
    ```bash
    git add data/notes.json data/pending.json data/images/ data/pending-images/
    git commit -m "process pending: X 条笔记补全"
-   git push -u origin claude/add-vocab-conversation-IUkEp
+   git push -u origin main
    ```
 
 ---
@@ -53,7 +53,7 @@
 用户说「帮我加单词 XX」时：
 1. 分析该词汇，在聊天里展示拟写入的 JSON（含 front/back/kana/romaji/pos/examples/tags）
 2. 用户确认后：`python scripts/add_note.py --json '...'`
-3. `git add data/notes.json && git commit -m "add: XX" && git push -u origin <branch>`
+3. `git add data/notes.json && git commit -m "add: XX" && git push -u origin main`
 
 ---
 
