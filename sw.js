@@ -4,13 +4,14 @@
    - data/notes.json はネットワークファースト（更新を素早く反映）
    ======================================================== */
 
-const CACHE_NAME = 'nihongo-notebook-v4-v1.1';
+const CACHE_NAME = 'nihongo-notebook-v5-v2.0';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './assets/style.css',
   './assets/app.js',
+  './assets/ai.js',
   './assets/srs.js',
   './assets/github.js',
   './assets/quiz.js',
