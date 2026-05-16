@@ -431,7 +431,13 @@ async function submitQuickToAI(imageBlob) {
   } catch (e) {
     if (aiBtn) aiBtn.disabled = false;
     if (queueBtn) queueBtn.disabled = false;
-    showQuickMsg('AI 补全失败：' + (e.message || String(e)), 'error');
+    const isCors = e.message === 'Load failed' || e.message === 'Failed to fetch' || e instanceof TypeError;
+    showQuickMsg(
+      isCors
+        ? '当前浏览器不支持直连 AI（CORS 限制，常见于 iPhone Safari）。可点「先暂存 →」，回家后让 Claude Code 补全。'
+        : 'AI 补全失败：' + (e.message || String(e)),
+      'error'
+    );
   }
 }
 

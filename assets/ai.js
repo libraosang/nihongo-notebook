@@ -55,7 +55,6 @@ export async function fillNoteWithAI(type, input, imageBlob = null) {
     headers: {
       'x-api-key': key,
       'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-calls': 'true',
       'content-type': 'application/json',
     },
     body: JSON.stringify({
