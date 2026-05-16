@@ -344,6 +344,7 @@ function _openQuickAddForm() {
       <div id="quick-form-msg"></div>
       <div class="form-actions quick-form-actions">
         <button type="button" class="btn-primary" id="qf-ai-btn">AI 实时补全 ✨</button>
+        <button type="button" class="btn-ai-settings" id="qf-ai-settings" title="AI 设置">⚙</button>
         <button type="button" class="btn-secondary" id="qf-queue-btn">先暂存 →</button>
         <button type="button" class="btn-link" id="qf-cancel">取消</button>
       </div>
@@ -381,14 +382,9 @@ function _openQuickAddForm() {
     }
   });
 
-  $('#qf-ai-btn').addEventListener('click', () => {
-    const blob = capturedBlob;
-    submitQuickToAI(blob);
-  });
-  $('#qf-queue-btn').addEventListener('click', () => {
-    const blob = capturedBlob;
-    submitQuickToQueue(blob);
-  });
+  $('#qf-ai-btn').addEventListener('click', () => submitQuickToAI(capturedBlob));
+  $('#qf-ai-settings').addEventListener('click', () => _openAiKeySetup());
+  $('#qf-queue-btn').addEventListener('click', () => submitQuickToQueue(capturedBlob));
 
   $('#qf-input').focus();
 }
@@ -432,12 +428,16 @@ async function submitQuickToAI(imageBlob) {
     if (aiBtn) aiBtn.disabled = false;
     if (queueBtn) queueBtn.disabled = false;
     const isCors = e.message === 'Load failed' || e.message === 'Failed to fetch' || e instanceof TypeError;
-    showQuickMsg(
-      isCors
-        ? '当前浏览器不支持直连 AI（CORS 限制，常见于 iPhone Safari）。可点「先暂存 →」，回家后让 Claude Code 补全。'
-        : 'AI 补全失败：' + (e.message || String(e)),
-      'error'
-    );
+    if (isCors) {
+      const el = $('#quick-form-msg');
+      if (el) {
+        el.className = 'form-msg form-msg-error';
+        el.innerHTML = '需要配置 Cloudflare 代理才能在手机上使用 AI 补全。<br><button type="button" class="btn-link" id="qf-goto-settings" style="padding:0;font-size:.85rem;">→ 去设置代理 URL</button>';
+        document.getElementById('qf-goto-settings')?.addEventListener('click', () => _openAiKeySetup());
+      }
+    } else {
+      showQuickMsg('AI 补全失败：' + (e.message || String(e)), 'error');
+    }
   }
 }
 

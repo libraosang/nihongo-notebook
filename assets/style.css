@@ -1082,6 +1082,19 @@ select.form-input { cursor: pointer; }
 
 /* 快速表单双按钮区 */
 .quick-form-actions { flex-wrap: wrap; gap: 0.5rem; }
+.btn-ai-settings {
+  background: transparent;
+  border: 1px solid var(--hai);
+  color: var(--usuzumi);
+  border-radius: var(--radius);
+  width: 36px;
+  height: 36px;
+  font-size: 1rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s;
+}
+.btn-ai-settings:hover { border-color: var(--akane); color: var(--akane); }
 
 /* 次级按钮（灰色边框） */
 .btn-secondary {
