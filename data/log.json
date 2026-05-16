@@ -35,6 +35,27 @@
       "score": 5,
       "via": "web",
       "question_type": "cn2jp"
+    },
+    {
+      "id": "20260516-001",
+      "date": "2026-05-16T15:48:44.552Z",
+      "score": 5,
+      "via": "web",
+      "question_type": "cn2jp"
+    },
+    {
+      "id": "20260516-003",
+      "date": "2026-05-16T15:49:01.733Z",
+      "score": 4,
+      "via": "web",
+      "question_type": "jp2cn"
+    },
+    {
+      "id": "20260516-002",
+      "date": "2026-05-16T15:49:08.364Z",
+      "score": 4,
+      "via": "web",
+      "question_type": "cn2jp"
     }
   ]
 }
