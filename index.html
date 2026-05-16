@@ -36,6 +36,7 @@
 
     <div class="action-bar">
       <button class="btn-quiz" id="quiz-btn" disabled>📝 今日复习</button>
+      <button class="btn-pending" id="pending-btn" style="display:none">⏳ 0</button>
       <button class="btn-add" id="add-btn">＋ 添加笔记</button>
     </div>
 
@@ -75,6 +76,12 @@
 
   <!-- 复习答题 Overlay -->
   <div class="quiz-overlay" id="quiz-overlay"></div>
+
+  <!-- 图片灯箱 -->
+  <div class="lightbox-backdrop" id="lightbox">
+    <button class="lightbox-close" id="lightbox-close" aria-label="关闭">×</button>
+    <img id="lightbox-img" src="" alt="场景截图">
+  </div>
 
   <script type="module" src="assets/app.js"></script>
   <script>

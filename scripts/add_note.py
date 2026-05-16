@@ -26,6 +26,7 @@ from common import (
 from srs import initial_srs
 
 VALID_TYPES = {"word", "phrase", "grammar", "expression", "culture"}
+PASSTHROUGH_FIELDS = {"image", "source", "context_note", "pos", "kana", "romaji", "tags", "examples"}
 
 
 def main():

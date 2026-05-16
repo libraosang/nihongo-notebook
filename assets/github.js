@@ -122,3 +122,33 @@ export async function updateFile(path, mutator, message, maxRetries = 3) {
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+/* ---------- バイナリファイルアップロード（画像用） ---------- */
+export async function putBinaryFile(path, blob, message) {
+  const buf = await blob.arrayBuffer();
+  const bytes = new Uint8Array(buf);
+  let binary = '';
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  const b64 = btoa(binary);
+
+  // 既存 SHA を取得（ファイルが存在する場合の上書き用）
+  let sha;
+  try {
+    const check = await fetch(`${API_BASE}/contents/${encodeURIComponent(path)}`, {
+      headers: authHeaders(),
+      cache: 'no-store',
+    });
+    if (check.ok) sha = (await check.json()).sha;
+  } catch {}
+
+  const res = await fetch(`${API_BASE}/contents/${encodeURIComponent(path)}`, {
+    method: 'PUT',
+    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ message, content: b64, ...(sha ? { sha } : {}) }),
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`putBinaryFile ${res.status}: ${body.slice(0, 200)}`);
+  }
+  return await res.json();
+}
