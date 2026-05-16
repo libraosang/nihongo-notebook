@@ -2,16 +2,19 @@
    Claude API — ブラウザ内 AI ノート補完クライアント
    ======================================================== */
 
-const AI_KEY_STORAGE = 'nihongo:ai:key';
-const ENDPOINT = 'https://api.anthropic.com/v1/messages';
+const AI_KEY_STORAGE   = 'nihongo:ai:key';
+const AI_PROXY_STORAGE = 'nihongo:ai:proxy';
+const DIRECT_ENDPOINT  = 'https://api.anthropic.com/v1/messages';
 const MODEL = 'claude-haiku-4-5-20251001';
 
-export function getAiKey() { return localStorage.getItem(AI_KEY_STORAGE) || ''; }
-export function setAiKey(k) {
-  if (k) localStorage.setItem(AI_KEY_STORAGE, k.trim());
-  else   localStorage.removeItem(AI_KEY_STORAGE);
+export function getAiKey()    { return localStorage.getItem(AI_KEY_STORAGE) || ''; }
+export function setAiKey(k)   { k ? localStorage.setItem(AI_KEY_STORAGE, k.trim()) : localStorage.removeItem(AI_KEY_STORAGE); }
+export function hasAiKey()    { return !!getAiKey(); }
+export function getProxyUrl() { return localStorage.getItem(AI_PROXY_STORAGE) || ''; }
+export function setProxyUrl(u) {
+  const clean = (u || '').trim().replace(/\/$/, '');
+  clean ? localStorage.setItem(AI_PROXY_STORAGE, clean) : localStorage.removeItem(AI_PROXY_STORAGE);
 }
-export function hasAiKey() { return !!getAiKey(); }
 
 const SYSTEM = `You are a Japanese language expert helping a game localizer in Tokyo build a personal vocabulary notebook.
 Given a word, phrase, grammar point, or expression — plus optional screenshot context — return ONLY a valid JSON object with these fields:
@@ -31,6 +34,7 @@ Return ONLY the JSON object. No markdown fences, no explanation.`;
 export async function fillNoteWithAI(type, input, imageBlob = null) {
   const key = getAiKey();
   if (!key) throw new Error('NO_AI_KEY');
+  const endpoint = getProxyUrl() || DIRECT_ENDPOINT;
 
   const contentBlocks = [];
 
@@ -50,7 +54,7 @@ export async function fillNoteWithAI(type, input, imageBlob = null) {
     text: `类型：${typeLabels[type] || type}\n内容：${input || '（请从截图中提取）'}`,
   });
 
-  const res = await fetch(ENDPOINT, {
+  const res = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'x-api-key': key,

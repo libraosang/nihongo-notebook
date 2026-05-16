@@ -6,7 +6,7 @@
 import { startQuiz, openTokenSettings } from './quiz.js';
 import { hasToken, updateFile, getFile, putBinaryFile } from './github.js';
 import { initialSrs } from './srs.js';
-import { fillNoteWithAI, hasAiKey, setAiKey } from './ai.js';
+import { fillNoteWithAI, hasAiKey, setAiKey, getAiKey, getProxyUrl, setProxyUrl } from './ai.js';
 
 const RAW_BASE = 'https://raw.githubusercontent.com/libraosang/nihongo-notebook/main/';
 
@@ -497,22 +497,31 @@ async function submitQuickToQueue(imageBlob) {
    AI Key 设置界面
    ====================================================== */
 function _openAiKeySetup() {
+  const curKey   = getAiKey();
+  const curProxy = getProxyUrl();
+
   $('#add-modal-content').innerHTML = `
     <button class="modal-close" id="add-modal-close">×</button>
-    <h2 style="margin-bottom:1.25rem;">✨ Anthropic API Key</h2>
+    <h2 style="margin-bottom:1.25rem;">✨ AI 设置</h2>
     <div class="add-form">
-      <p style="font-family:var(--sans);font-size:.9rem;color:var(--sumi-soft);margin-bottom:1rem;line-height:1.7;">
-        实时 AI 补全需要 Anthropic API Key。<br>
-        Key 只存在本设备的浏览器里，不会上传到任何服务器。
-      </p>
-      <ol class="setup-steps" style="margin-bottom:1.25rem;">
-        <li>打开 <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Anthropic Console</a> → API Keys</li>
-        <li>创建新 Key，复制 <code>sk-ant-…</code> 开头的字符串</li>
-        <li>粘贴到下方并保存</li>
-      </ol>
       <div class="form-row">
-        <label class="form-label">API Key</label>
-        <input type="password" id="ai-key-input" class="form-input" placeholder="sk-ant-api03-...">
+        <label class="form-label">Anthropic API Key <span class="req">*</span></label>
+        <input type="password" id="ai-key-input" class="form-input" placeholder="sk-ant-api03-..."
+               value="${esc(curKey)}">
+        <div class="form-hint">
+          在 <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Anthropic Console</a> 创建 Key，只保存在本设备浏览器里。
+        </div>
+      </div>
+      <div class="form-row" style="margin-top:.25rem;">
+        <label class="form-label">Cloudflare Worker 代理 URL <span class="form-hint-inline">iPhone 必填</span></label>
+        <input type="text" id="ai-proxy-input" class="form-input" placeholder="https://xxx.workers.dev"
+               value="${esc(curProxy)}">
+        <div class="form-hint" style="line-height:1.6;">
+          iPhone/iOS 浏览器受 CORS 限制，需要先部署代理：<br>
+          1. 打开 <a href="https://workers.cloudflare.com" target="_blank" rel="noopener">workers.cloudflare.com</a>（免费注册）<br>
+          2. 创建 Worker → 粘贴 <code>assets/cf-worker.js</code> 里的代码 → Deploy<br>
+          3. 把 Worker 域名填入此处
+        </div>
       </div>
       <div id="ai-key-msg"></div>
       <div class="form-actions">
@@ -525,12 +534,14 @@ function _openAiKeySetup() {
   $('#ai-key-back').addEventListener('click', () => _openQuickAddForm());
   $('#ai-key-save').addEventListener('click', () => {
     const k = $('#ai-key-input').value.trim();
+    const p = $('#ai-proxy-input').value.trim();
     if (!k) { $('#ai-key-msg').innerHTML = '<span style="color:var(--akane)">请输入 API Key</span>'; return; }
     setAiKey(k);
-    $('#ai-key-msg').innerHTML = '<span style="color:var(--moegi)">✓ 已保存</span>';
-    setTimeout(() => _openQuickAddForm(), 600);
+    setProxyUrl(p);
+    $('#ai-key-msg').innerHTML = `<span style="color:var(--moegi)">✓ 已保存${p ? '（含代理）' : ''}</span>`;
+    setTimeout(() => _openQuickAddForm(), 700);
   });
-  $('#ai-key-input').addEventListener('keydown', e => { if (e.key === 'Enter') $('#ai-key-save').click(); });
+  $('#ai-key-input').addEventListener('keydown', e => { if (e.key === 'Enter') $('#ai-proxy-input').focus(); });
 }
 
 /* ======================================================
