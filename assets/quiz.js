@@ -5,6 +5,7 @@
 
 import { grade as srsGrade } from './srs.js';
 import { hasToken, getFile, updateFile, verifyToken } from './github.js';
+import { speak } from './speech.js';
 
 const i18n = () => window._quizI18n || {};
 
@@ -85,16 +86,16 @@ function renderCard() {
       <div class="quiz-card ${state.flipped ? 'flipped' : ''}">
         <div class="quiz-front">
           <div class="quiz-prompt">${esc(qType.prompt)}</div>
-          <div class="quiz-question">${esc(qType.question)}</div>
+          <div class="quiz-question">${esc(qType.question)}<button class="btn-speak" data-text="${esc(note.front)}" title="朗读">🔊</button></div>
           <button class="quiz-flip-btn">查看答案 ⤵</button>
         </div>
         <div class="quiz-back">
           <div class="quiz-answer-label">正确答案</div>
-          <div class="quiz-answer">${esc(qType.answer)}</div>
+          <div class="quiz-answer">${esc(qType.answer)}<button class="btn-speak" data-text="${esc(note.front)}" title="朗读">🔊</button></div>
           ${qType.kana && qType.kana !== qType.answer ? `<div class="quiz-answer-kana">${esc(qType.kana)}</div>` : ''}
           ${note.examples?.[0] ? `
             <div class="quiz-example">
-              <div class="ja">${esc(note.examples[0].ja || '')}</div>
+              <div class="ja">${esc(note.examples[0].ja || '')}<button class="btn-speak" data-text="${esc(note.examples[0].ja || '')}" title="朗读例句">🔊</button></div>
               ${note.examples[0].zh ? `<div class="zh">${esc(note.examples[0].zh)}</div>` : ''}
             </div>` : ''}
           ${note.context_note ? `<div class="quiz-note">💡 ${esc(note.context_note)}</div>` : ''}
@@ -117,6 +118,9 @@ function renderCard() {
   });
   document.querySelectorAll('.grade-btn').forEach(btn =>
     btn.addEventListener('click', () => onGrade(parseInt(btn.dataset.score, 10), qType))
+  );
+  document.querySelectorAll('.quiz-stage .btn-speak').forEach(btn =>
+    btn.addEventListener('click', e => { e.stopPropagation(); speak(btn.dataset.text); })
   );
 }
 

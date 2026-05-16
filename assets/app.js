@@ -7,6 +7,7 @@ import { startQuiz, openTokenSettings } from './quiz.js';
 import { hasToken, updateFile, getFile, putBinaryFile } from './github.js';
 import { initialSrs } from './srs.js';
 import { fillNoteWithAI, hasAiKey, setAiKey, getAiKey, getProxyUrl, setProxyUrl } from './ai.js';
+import { speak } from './speech.js';
 
 const RAW_BASE = 'https://raw.githubusercontent.com/libraosang/nihongo-notebook/main/';
 
@@ -168,7 +169,7 @@ function renderList() {
     return `<div class="note-card ${status}" data-id="${n.id}">
       ${thumb}
       <span class="type-badge">${TYPE_LABELS[n.type]?.zh || n.type}</span>
-      <div class="front">${esc(n.front)}</div>
+      <div class="front">${esc(n.front)}<button class="btn-speak" data-text="${esc(n.front)}" title="朗读">🔊</button></div>
       ${n.kana && n.kana !== n.front ? `<div class="kana">${esc(n.kana)}</div>` : ''}
       <div class="back">${esc(truncate(n.back, 60))}</div>
       ${tags ? `<div class="meta">${tags}</div>` : ''}
@@ -177,6 +178,9 @@ function renderList() {
   }).join('');
   $$('#notes-list .note-card').forEach(card =>
     card.addEventListener('click', () => openDetailModal(card.dataset.id))
+  );
+  $$('#notes-list .btn-speak').forEach(btn =>
+    btn.addEventListener('click', e => { e.stopPropagation(); speak(btn.dataset.text); })
   );
 }
 
@@ -211,7 +215,7 @@ function openDetailModal(id) {
   if (!note) return;
 
   const examples = (note.examples || []).map(e =>
-    `<li><div class="ja">${esc(e.ja || '')}</div>${e.zh ? `<div class="zh">${esc(e.zh)}</div>` : ''}</li>`
+    `<li><div class="ja">${esc(e.ja || '')}<button class="btn-speak" data-text="${esc(e.ja || '')}" title="朗读例句">🔊</button></div>${e.zh ? `<div class="zh">${esc(e.zh)}</div>` : ''}</li>`
   ).join('');
   const tags = (note.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join('');
 
@@ -226,7 +230,7 @@ function openDetailModal(id) {
 
   $('#modal-content').innerHTML = `
     <button class="modal-close" aria-label="关闭">×</button>
-    <h2>${esc(note.front)}</h2>
+    <h2>${esc(note.front)}<button class="btn-speak" data-text="${esc(note.front)}" title="朗读">🔊</button></h2>
     ${note.kana ? `<div class="modal-kana">${esc(note.kana)}</div>` : ''}
     ${note.romaji ? `<div class="modal-romaji">${esc(note.romaji)}</div>` : ''}
     <div class="modal-back">${esc(note.back)}</div>
@@ -256,6 +260,9 @@ function openDetailModal(id) {
   document.addEventListener('keydown', onEscKey);
   $('#modal-edit-btn').addEventListener('click', () => { closeDetailModal(); openEditModal(note.id); });
   $('#modal-delete-btn').addEventListener('click', () => confirmDelete(note.id, note.front));
+  $$('#modal-content .btn-speak').forEach(btn =>
+    btn.addEventListener('click', () => speak(btn.dataset.text))
+  );
 }
 
 function closeDetailModal() {
