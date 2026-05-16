@@ -28,6 +28,13 @@
       "score": 5,
       "via": "web",
       "question_type": "jp2cn"
+    },
+    {
+      "id": "20260516-001",
+      "date": "2026-05-16T15:26:44.492Z",
+      "score": 5,
+      "via": "web",
+      "question_type": "cn2jp"
     }
   ]
 }
