@@ -1336,3 +1336,19 @@ select.form-input { cursor: pointer; }
 }
 .settings-details > summary:hover { color: var(--akane); }
 .settings-details[open] > summary { margin-bottom: 0.5rem; }
+
+/* ===== 朗读按钮 ===== */
+.btn-speak {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 .2rem;
+  font-size: .8rem;
+  opacity: .4;
+  vertical-align: middle;
+  line-height: 1;
+  transition: opacity .15s;
+  margin-left: .15rem;
+}
+.btn-speak:hover,
+.btn-speak:focus { opacity: 1; outline: none; }
