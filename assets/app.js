@@ -494,7 +494,7 @@ async function submitQuickToQueue(imageBlob) {
 }
 
 /* ======================================================
-   AI Key 设置界面
+   AI Key + 代理 URL 设置界面
    ====================================================== */
 function _openAiKeySetup() {
   const curKey   = getAiKey();
@@ -897,6 +897,14 @@ function init() {
   $('#token-btn')?.addEventListener('click', () => openTokenSettings());
   $('#add-btn')?.addEventListener('click', () => openAddModal());
   $('#pending-btn')?.addEventListener('click', () => openPendingView());
+  $('#refresh-btn')?.addEventListener('click', async () => {
+    const btn = $('#refresh-btn');
+    btn.classList.add('spinning');
+    btn.disabled = true;
+    await Promise.all([reloadFromGitHub(), loadPending()]);
+    btn.classList.remove('spinning');
+    btn.disabled = false;
+  });
 
   // Lightbox 关闭
   document.getElementById('lightbox')?.addEventListener('click', e => {

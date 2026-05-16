@@ -459,7 +459,7 @@ a:hover { text-decoration: underline; }
   align-items: center;
   gap: 0.75rem;
 }
-.btn-token {
+.btn-token, .btn-refresh {
   background: transparent;
   border: 1px solid var(--hai);
   border-radius: var(--radius-sm);
@@ -469,10 +469,26 @@ a:hover { text-decoration: underline; }
   cursor: pointer;
   color: var(--usuzumi);
   transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.btn-token:hover {
+.btn-token:hover, .btn-refresh:hover {
   border-color: var(--akane);
   color: var(--akane);
+}
+.btn-refresh {
+  font-size: 1.25rem;
+  line-height: 1;
+  select: none;
+}
+@keyframes spin-icon {
+  to { transform: rotate(360deg); }
+}
+.btn-refresh.spinning {
+  animation: spin-icon 0.7s linear infinite;
+  pointer-events: none;
+  opacity: 0.6;
 }
 
 /* アクションバー（クイズ開始ボタン） */
