@@ -16,6 +16,11 @@ export function setProxyUrl(u) {
   clean ? localStorage.setItem(AI_PROXY_STORAGE, clean) : localStorage.removeItem(AI_PROXY_STORAGE);
 }
 
+const OPENAI_KEY_STORAGE = 'nihongo:openai:key';
+export const getOpenAiKey = () => localStorage.getItem(OPENAI_KEY_STORAGE) || '';
+export const setOpenAiKey = k => k ? localStorage.setItem(OPENAI_KEY_STORAGE, k.trim()) : localStorage.removeItem(OPENAI_KEY_STORAGE);
+export const hasOpenAiKey = () => !!localStorage.getItem(OPENAI_KEY_STORAGE);
+
 const SYSTEM = `You are a Japanese language expert helping a game localizer in Tokyo build a personal vocabulary notebook.
 Given a word, phrase, grammar point, or expression — plus optional screenshot context — return ONLY a valid JSON object with these fields:
 - front: the Japanese word/phrase/grammar (string, required)

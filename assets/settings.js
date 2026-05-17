@@ -6,7 +6,7 @@
    ======================================================== */
 
 import { getToken, setToken, hasToken, verifyToken } from './github.js';
-import { getAiKey, setAiKey, hasAiKey, getProxyUrl, setProxyUrl } from './ai.js';
+import { getAiKey, setAiKey, hasAiKey, getProxyUrl, setProxyUrl, getOpenAiKey, setOpenAiKey, hasOpenAiKey } from './ai.js';
 
 const $ = s => document.querySelector(s);
 
@@ -30,11 +30,12 @@ export function openSettings({ focus, reason, onSaved } = {}) {
     <div class="quiz-stage settings-stage">
       <button class="modal-close" id="settings-close" aria-label="关闭">×</button>
       <h2 style="margin-bottom:.35rem;">⚙ API 设置</h2>
-      <p class="settings-subtitle">三个凭据都只保存在本设备浏览器的 localStorage 里。</p>
+      <p class="settings-subtitle">所有凭据只保存在本设备浏览器的 localStorage 里。</p>
       <div id="settings-banner"></div>
       ${renderSection('github')}
       ${renderSection('ai')}
       ${renderSection('proxy')}
+      ${renderSection('openai')}
     </div>
   `;
   overlay.classList.add('open');
@@ -42,6 +43,7 @@ export function openSettings({ focus, reason, onSaved } = {}) {
   wireSection('github');
   wireSection('ai');
   wireSection('proxy');
+  wireSection('openai');
 
   $('#settings-close').addEventListener('click', closeSettings);
   overlay.addEventListener('click', e => { if (e.target.id === 'settings-overlay') closeSettings(); });
@@ -85,6 +87,7 @@ function renderSection(kind) {
   if (kind === 'github') return renderGithubSection();
   if (kind === 'ai')     return renderAiSection();
   if (kind === 'proxy')  return renderProxySection();
+  if (kind === 'openai') return renderOpenAiSection();
   return '';
 }
 
@@ -191,6 +194,38 @@ function renderProxySection() {
   `;
 }
 
+function renderOpenAiSection() {
+  const cur = getOpenAiKey();
+  const hasVal = !!cur;
+  const pill = hasVal
+    ? `<span class="settings-pill settings-pill-ok">✓ 已填写</span>`
+    : `<span class="settings-pill settings-pill-empty">○ 未设置</span>`;
+
+  return `
+    <section class="settings-section" data-kind="openai">
+      <div class="settings-section-head">
+        <h3>🔊 OpenAI API Key（朗读功能）</h3>
+        ${pill}
+      </div>
+      ${hasVal ? `<div class="settings-current">当前：<code>${esc(maskedValue(cur))}</code></div>` : ''}
+      <div class="form-row">
+        <input type="password" id="openai-input" class="form-input" placeholder="sk-..." value="${esc(cur)}" autocomplete="off">
+      </div>
+      <details class="settings-details" ${hasVal ? '' : 'open'}>
+        <summary>查看获取方式</summary>
+        <div class="form-hint" style="line-height:1.6;">
+          在 <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">OpenAI Platform</a> 创建 Key。无 Key 时 🔊 按钮自动降级为浏览器内置语音。
+        </div>
+      </details>
+      <div class="form-actions">
+        <button type="button" class="btn-primary" id="openai-save">保存</button>
+        ${hasVal ? '<button type="button" class="btn-link" id="openai-clear">删除</button>' : ''}
+      </div>
+      <div class="form-msg" id="openai-msg"></div>
+    </section>
+  `;
+}
+
 /* ============== Section 绑定 ============== */
 
 function wireSection(kind) {
@@ -206,6 +241,10 @@ function wireSection(kind) {
     $('#proxy-save')?.addEventListener('click', saveProxy);
     $('#proxy-clear')?.addEventListener('click', clearProxy);
     $('#proxy-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') saveProxy(); });
+  } else if (kind === 'openai') {
+    $('#openai-save')?.addEventListener('click', saveOpenAi);
+    $('#openai-clear')?.addEventListener('click', clearOpenAi);
+    $('#openai-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') saveOpenAi(); });
   }
 }
 
@@ -275,6 +314,23 @@ function clearProxy() {
   if (!confirm('确认删除代理 URL？将直连 api.anthropic.com（iPhone 上会因 CORS 失败）。')) return;
   setProxyUrl('');
   rerenderSection('proxy');
+}
+
+function saveOpenAi() {
+  const k = $('#openai-input').value.trim();
+  const msg = $('#openai-msg');
+  if (!k) { msg.innerHTML = '<span style="color:var(--akane);">请输入 API Key</span>'; return; }
+  setOpenAiKey(k);
+  msg.innerHTML = '<span style="color:var(--moegi);">✓ 已保存</span>';
+  rerenderSection('openai');
+  clearBanner();
+  notifySaved('openai');
+}
+
+function clearOpenAi() {
+  if (!confirm('确认删除 OpenAI API Key？🔊 按钮将降级为浏览器内置语音。')) return;
+  setOpenAiKey('');
+  rerenderSection('openai');
 }
 
 /* ============== 状态徽标 + 后台验证 ============== */

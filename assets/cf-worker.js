@@ -1,12 +1,13 @@
 /**
- * Nihongo Notebook · Anthropic API CORS 代理
+ * Nihongo Notebook · API CORS 代理
+ * 支持 Anthropic API（AI 补全）和 OpenAI API（TTS 朗读）
  * 部署到 Cloudflare Workers（免费套餐）
  *
  * 部署步骤：
  * 1. 打开 https://workers.cloudflare.com → 登录或注册（免费）
  * 2. 创建新 Worker → 把本文件全部内容粘贴进去
  * 3. 点击 Deploy → 复制 Worker 域名（如 https://xxx.workers.dev）
- * 4. 在笔记本 App 的「Anthropic API Key」设置里填入该域名
+ * 4. 在笔记本 App 的「Cloudflare Worker 代理 URL」设置里填入该域名
  */
 
 export default {
@@ -22,7 +23,7 @@ export default {
     const corsHeaders = {
       'Access-Control-Allow-Origin': allowed ? origin : 'null',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, x-api-key, anthropic-version',
+      'Access-Control-Allow-Headers': 'Content-Type, x-api-key, anthropic-version, Authorization',
       'Access-Control-Max-Age': '86400',
     };
 
@@ -35,7 +36,38 @@ export default {
       return new Response('Method Not Allowed', { status: 405 });
     }
 
-    // 转发到 Anthropic API
+    const url = new URL(request.url);
+
+    // OpenAI 路由：路径以 /openai/ 开头时转发到 api.openai.com
+    if (url.pathname.startsWith('/openai/')) {
+      const path = url.pathname.replace('/openai', '');
+      let openaiRes;
+      try {
+        openaiRes = await fetch(`https://api.openai.com${path}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': request.headers.get('Authorization') || '',
+            'Content-Type': 'application/json',
+          },
+          body: request.body,
+        });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: { message: 'Proxy fetch error: ' + e.message } }), {
+          status: 502,
+          headers: { 'content-type': 'application/json', ...corsHeaders },
+        });
+      }
+
+      return new Response(openaiRes.body, {
+        status: openaiRes.status,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': openaiRes.headers.get('Content-Type') || 'audio/mpeg',
+        },
+      });
+    }
+
+    // Anthropic 路由（默认）
     let anthropicRes;
     try {
       anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
