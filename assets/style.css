@@ -63,6 +63,13 @@ a:hover { text-decoration: underline; }
   align-items: center;
   gap: 0.75rem;
 }
+.seal-wrap {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+}
 .seal {
   width: 44px;
   height: 44px;
@@ -78,6 +85,27 @@ a:hover { text-decoration: underline; }
   transform: rotate(-3deg);
   box-shadow: 0 2px 6px rgba(196, 56, 45, 0.3);
   flex-shrink: 0;
+}
+.mascot {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-bottom: -6px;
+  transform: rotate(6deg);
+  animation: mascot-wiggle 3s ease-in-out infinite;
+  transform-origin: bottom center;
+  transition: transform 0.2s ease;
+}
+.mascot:hover {
+  animation-play-state: paused;
+  transform: rotate(-6deg) scale(1.25);
+}
+@keyframes mascot-wiggle {
+  0%, 100% { transform: rotate(6deg); }
+  25% { transform: rotate(12deg) translateY(-2px); }
+  50% { transform: rotate(3deg); }
+  75% { transform: rotate(10deg) translateY(-1px); }
 }
 .brand-text h1 {
   font-size: 1.15rem;
