@@ -5,6 +5,7 @@
 
 import { grade as srsGrade } from './srs.js';
 import { hasToken, getFile, updateFile, verifyToken } from './github.js';
+import { openSettings } from './settings.js';
 
 const i18n = () => window._quizI18n || {};
 
@@ -24,10 +25,19 @@ const $ = s => document.querySelector(s);
 
 /* ===== 启动 ===== */
 export async function startQuiz() {
-  if (!hasToken()) return showSetup('需要 GitHub Token 才能写回答题结果');
+  if (!hasToken()) {
+    openSettings({ focus: 'github', reason: '需要先填写 GitHub Token 才能开始答题', onSaved: () => startQuiz() });
+    return;
+  }
   const v = await verifyToken();
-  if (!v.ok)          return showSetup('Token 无效：' + (v.error || ''));
-  if (!v.permissions?.push) return showSetup('该 Token 没有写权限，请开启 Contents: Read & Write');
+  if (!v.ok) {
+    openSettings({ focus: 'github', reason: 'Token 无效：' + (v.error || ''), onSaved: () => startQuiz() });
+    return;
+  }
+  if (!v.permissions?.push) {
+    openSettings({ focus: 'github', reason: '该 Token 没有写权限，请开启 Contents: Read & Write', onSaved: () => startQuiz() });
+    return;
+  }
 
   showOverlay(`<div class="quiz-loading">📚 正在准备今日复习…</div>`);
 
@@ -202,65 +212,6 @@ function showSummary(err) {
     else if (window._reloadNotes) window._reloadNotes();
   });
   if (err) $('#retry-save')?.addEventListener('click', finishQuiz);
-}
-
-/* ===== Token 设置 ===== */
-export function openTokenSettings() {
-  showOverlay(`
-    <div class="quiz-stage">
-      <div class="quiz-setup">
-        <h2>🔑 GitHub Token 设置</h2>
-        <p>需要 Fine-grained Personal Access Token 将答题结果写回 GitHub。</p>
-        <ol class="setup-steps">
-          <li>打开 <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub Personal Access Tokens 页面</a></li>
-          <li><strong>Repository access</strong>：仅选择 <code>libraosang/nihongo-notebook</code></li>
-          <li><strong>Repository permissions</strong> → <strong>Contents</strong>：设为 <strong>Read and write</strong></li>
-          <li>点击 Generate token，复制 <code>github_pat_…</code> 开头的 Token</li>
-          <li>粘贴到下方</li>
-        </ol>
-        <input type="password" id="pat-input" class="search-input" placeholder="github_pat_..." style="width:100%;margin-top:1rem;">
-        <div style="margin-top:.75rem;display:flex;gap:.5rem;">
-          <button class="btn-primary" id="pat-save">验证并保存</button>
-          <button class="btn-link"    id="pat-cancel">取消</button>
-        </div>
-        <div id="pat-msg" style="margin-top:.75rem;font-family:var(--sans);font-size:.85rem;"></div>
-      </div>
-    </div>`);
-
-  $('#pat-save').addEventListener('click', async () => {
-    const t = $('#pat-input').value.trim();
-    if (!t) { $('#pat-msg').innerHTML = '<span style="color:var(--akane);">请输入 Token</span>'; return; }
-    $('#pat-msg').innerHTML = '🔍 验证中…';
-    const v = await verifyToken(t);
-    if (!v.ok) { $('#pat-msg').innerHTML = `<span style="color:var(--akane);">⚠ ${esc(v.error)}</span>`; return; }
-    if (!v.permissions?.push) { $('#pat-msg').innerHTML = `<span style="color:var(--akane);">⚠ 没有写权限</span>`; return; }
-    localStorage.setItem('nihongo:gh:pat', t);
-    $('#pat-msg').innerHTML = '<span style="color:var(--moegi);">✓ 已保存，正在跳转…</span>';
-    setTimeout(() => startQuiz(), 600);
-  });
-  $('#pat-cancel').addEventListener('click', () => $('#quiz-overlay').classList.remove('open'));
-}
-
-export function openTokenManagement() {
-  const cur    = localStorage.getItem('nihongo:gh:pat');
-  const masked = cur ? cur.slice(0, 12) + '…' + cur.slice(-4) : '（未设置）';
-  showOverlay(`
-    <div class="quiz-stage">
-      <div class="quiz-setup">
-        <h2>🔑 Token 管理</h2>
-        <p>当前 Token：<code>${esc(masked)}</code></p>
-        <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
-          <button class="btn-primary" id="pat-renew">重新设置</button>
-          <button class="btn-link"    id="pat-delete">删除</button>
-          <button class="btn-link"    id="pat-close">关闭</button>
-        </div>
-      </div>
-    </div>`);
-  $('#pat-renew').addEventListener('click', () => openTokenSettings());
-  $('#pat-delete').addEventListener('click', () => {
-    if (confirm('确认删除 Token？')) { localStorage.removeItem('nihongo:gh:pat'); $('#quiz-overlay').classList.remove('open'); }
-  });
-  $('#pat-close').addEventListener('click', () => $('#quiz-overlay').classList.remove('open'));
 }
 
 /* ===== 工具 ===== */

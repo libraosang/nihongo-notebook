@@ -3,10 +3,11 @@
    v2.0 — Quick Capture + AI 补全 + 待处理队列
    ======================================================== */
 
-import { startQuiz, openTokenSettings } from './quiz.js';
+import { startQuiz } from './quiz.js';
 import { hasToken, updateFile, getFile, putBinaryFile } from './github.js';
 import { initialSrs } from './srs.js';
-import { fillNoteWithAI, hasAiKey, setAiKey, getAiKey, getProxyUrl, setProxyUrl } from './ai.js';
+import { fillNoteWithAI, hasAiKey } from './ai.js';
+import { openSettings } from './settings.js';
 
 const RAW_BASE = 'https://raw.githubusercontent.com/libraosang/nihongo-notebook/main/';
 
@@ -275,7 +276,7 @@ function onEscKey(e) {
    删除确认
    ====================================================== */
 async function confirmDelete(id, front) {
-  if (!hasToken()) { openTokenSettings(); return; }
+  if (!hasToken()) { openSettings({ focus: 'github', reason: '需要先填写 GitHub Token 才能删除笔记' }); return; }
   if (!confirm(`确定删除「${front}」？\n\n删除后无法撤销（但 GitHub 仓库有历史记录可回溯）。`)) return;
 
   closeDetailModal();
@@ -299,14 +300,14 @@ async function confirmDelete(id, front) {
    编辑 Modal
    ====================================================== */
 function openEditModal(id) {
-  if (!hasToken()) { openTokenSettings(); return; }
+  if (!hasToken()) { openSettings({ focus: 'github', reason: '需要先填写 GitHub Token 才能编辑笔记' }); return; }
   const note = state.notes.find(n => n.id === id);
   if (!note) return;
   _openNoteForm({ mode: 'edit', note });
 }
 
 function openAddModal() {
-  if (!hasToken()) { openTokenSettings(); return; }
+  if (!hasToken()) { openSettings({ focus: 'github', reason: '需要先填写 GitHub Token 才能添加笔记' }); return; }
   _openQuickAddForm();
 }
 
@@ -344,7 +345,6 @@ function _openQuickAddForm() {
       <div id="quick-form-msg"></div>
       <div class="form-actions quick-form-actions">
         <button type="button" class="btn-primary" id="qf-ai-btn">AI 实时补全 ✨</button>
-        <button type="button" class="btn-ai-settings" id="qf-ai-settings" title="AI 设置">⚙</button>
         <button type="button" class="btn-secondary" id="qf-queue-btn">先暂存 →</button>
         <button type="button" class="btn-link" id="qf-cancel">取消</button>
       </div>
@@ -383,7 +383,6 @@ function _openQuickAddForm() {
   });
 
   $('#qf-ai-btn').addEventListener('click', () => submitQuickToAI(capturedBlob));
-  $('#qf-ai-settings').addEventListener('click', () => _openAiKeySetup());
   $('#qf-queue-btn').addEventListener('click', () => submitQuickToQueue(capturedBlob));
 
   $('#qf-input').focus();
@@ -411,7 +410,7 @@ async function submitQuickToAI(imageBlob) {
   if (!input && !imageBlob) { showQuickMsg('请填写内容或添加截图', 'error'); return; }
 
   if (!hasAiKey()) {
-    _openAiKeySetup();
+    openSettings({ focus: 'ai', reason: '需要 Anthropic API Key 才能用 AI 补全' });
     return;
   }
 
@@ -433,7 +432,7 @@ async function submitQuickToAI(imageBlob) {
       if (el) {
         el.className = 'form-msg form-msg-error';
         el.innerHTML = '需要配置 Cloudflare 代理才能在手机上使用 AI 补全。<br><button type="button" class="btn-link" id="qf-goto-settings" style="padding:0;font-size:.85rem;">→ 去设置代理 URL</button>';
-        document.getElementById('qf-goto-settings')?.addEventListener('click', () => _openAiKeySetup());
+        document.getElementById('qf-goto-settings')?.addEventListener('click', () => openSettings({ focus: 'proxy', reason: 'iPhone 需要先配置 CF Worker 代理 URL' }));
       }
     } else {
       showQuickMsg('AI 补全失败：' + (e.message || String(e)), 'error');
@@ -491,57 +490,6 @@ async function submitQuickToQueue(imageBlob) {
     if (queueBtn) queueBtn.disabled = false;
     showQuickMsg('保存失败：' + (e.message || String(e)), 'error');
   }
-}
-
-/* ======================================================
-   AI Key + 代理 URL 设置界面
-   ====================================================== */
-function _openAiKeySetup() {
-  const curKey   = getAiKey();
-  const curProxy = getProxyUrl();
-
-  $('#add-modal-content').innerHTML = `
-    <button class="modal-close" id="add-modal-close">×</button>
-    <h2 style="margin-bottom:1.25rem;">✨ AI 设置</h2>
-    <div class="add-form">
-      <div class="form-row">
-        <label class="form-label">Anthropic API Key <span class="req">*</span></label>
-        <input type="password" id="ai-key-input" class="form-input" placeholder="sk-ant-api03-..."
-               value="${esc(curKey)}">
-        <div class="form-hint">
-          在 <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Anthropic Console</a> 创建 Key，只保存在本设备浏览器里。
-        </div>
-      </div>
-      <div class="form-row" style="margin-top:.25rem;">
-        <label class="form-label">Cloudflare Worker 代理 URL <span class="form-hint-inline">iPhone 必填</span></label>
-        <input type="text" id="ai-proxy-input" class="form-input" placeholder="https://xxx.workers.dev"
-               value="${esc(curProxy)}">
-        <div class="form-hint" style="line-height:1.6;">
-          iPhone/iOS 浏览器受 CORS 限制，需要先部署代理：<br>
-          1. 打开 <a href="https://workers.cloudflare.com" target="_blank" rel="noopener">workers.cloudflare.com</a>（免费注册）<br>
-          2. 创建 Worker → 粘贴 <code>assets/cf-worker.js</code> 里的代码 → Deploy<br>
-          3. 把 Worker 域名填入此处
-        </div>
-      </div>
-      <div id="ai-key-msg"></div>
-      <div class="form-actions">
-        <button type="button" class="btn-primary" id="ai-key-save">保存</button>
-        <button type="button" class="btn-link" id="ai-key-back">← 返回</button>
-      </div>
-    </div>
-  `;
-  $('#add-modal-close').addEventListener('click', closeEditModal);
-  $('#ai-key-back').addEventListener('click', () => _openQuickAddForm());
-  $('#ai-key-save').addEventListener('click', () => {
-    const k = $('#ai-key-input').value.trim();
-    const p = $('#ai-proxy-input').value.trim();
-    if (!k) { $('#ai-key-msg').innerHTML = '<span style="color:var(--akane)">请输入 API Key</span>'; return; }
-    setAiKey(k);
-    setProxyUrl(p);
-    $('#ai-key-msg').innerHTML = `<span style="color:var(--moegi)">✓ 已保存${p ? '（含代理）' : ''}</span>`;
-    setTimeout(() => _openQuickAddForm(), 700);
-  });
-  $('#ai-key-input').addEventListener('keydown', e => { if (e.key === 'Enter') $('#ai-proxy-input').focus(); });
 }
 
 /* ======================================================
@@ -780,7 +728,7 @@ async function submitEditNote(id) {
    待处理队列视图
    ====================================================== */
 async function openPendingView() {
-  if (!hasToken()) { openTokenSettings(); return; }
+  if (!hasToken()) { openSettings({ focus: 'github', reason: '需要先填写 GitHub Token 才能查看待处理队列' }); return; }
   try {
     const { json } = await getFile('data/pending.json');
     state.pending = json?.pending || [];
@@ -894,7 +842,7 @@ function init() {
   });
   $('#modal').addEventListener('click', e => { if (e.target.id === 'modal') closeDetailModal(); });
   $('#quiz-btn')?.addEventListener('click', () => startQuiz());
-  $('#token-btn')?.addEventListener('click', () => openTokenSettings());
+  $('#settings-btn')?.addEventListener('click', () => openSettings());
   $('#add-btn')?.addEventListener('click', () => openAddModal());
   $('#pending-btn')?.addEventListener('click', () => openPendingView());
   $('#refresh-btn')?.addEventListener('click', async () => {
