@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-05-18T14:17:41.080Z",
+  "updated_at": "2026-05-18T14:25:25.883Z",
   "notes": [
     {
       "type": "word",
@@ -147,11 +147,11 @@
       "context_note": "「各々」是较为正式、书面语的表达，常用于游戏叙事、公式文档中。日常口语中更常用「それぞれ」。两者意思相近，但「各々」显得更庄重。",
       "created_at": "2026-05-16T15:51:00.576Z",
       "srs": {
-        "interval": 1,
+        "interval": 6,
         "ease": 2.6,
-        "reps": 1,
+        "reps": 2,
         "lapses": 0,
-        "next_review": "2026-05-18",
+        "next_review": "2026-05-23",
         "last_review": "2026-05-18"
       }
     },
@@ -182,11 +182,11 @@
       "context_note": "ダウジング来自英文 dowsing。在游戏中常指用特殊工具寻找隐藏物品的机制。不仅是探水，也可泛指用探杆进行的各种探查活动。",
       "created_at": "2026-05-16T16:01:35.371Z",
       "srs": {
-        "interval": 1,
+        "interval": 6,
         "ease": 2.5,
-        "reps": 1,
+        "reps": 2,
         "lapses": 0,
-        "next_review": "2026-05-18",
+        "next_review": "2026-05-23",
         "last_review": "2026-05-18"
       }
     },
@@ -222,11 +222,11 @@
       "context_note": "来自法语camouflage。在游戏中常用于描述隐身、伪装或躲避敌人的机制。也可引申为'隐瞒真相'的意思。",
       "created_at": "2026-05-16T16:04:59.634Z",
       "srs": {
-        "interval": 1,
+        "interval": 6,
         "ease": 2.5,
-        "reps": 1,
+        "reps": 2,
         "lapses": 0,
-        "next_review": "2026-05-18",
+        "next_review": "2026-05-23",
         "last_review": "2026-05-18"
       },
       "updated_at": "2026-05-16T16:05:38.321Z"
@@ -262,11 +262,11 @@
       "context_note": "メンツ（面子）来自中文，常见于商业竞争或国际关系中。强调为了维护自己的名声、地位或威信而与他人竞争，有时带有贬义含义，暗示这种竞争可能非理性或浪费资源。",
       "created_at": "2026-05-17T15:21:40.400Z",
       "srs": {
-        "interval": 1,
+        "interval": 6,
         "ease": 2.5,
-        "reps": 1,
+        "reps": 2,
         "lapses": 0,
-        "next_review": "2026-05-18",
+        "next_review": "2026-05-23",
         "last_review": "2026-05-18"
       }
     },
@@ -303,12 +303,12 @@
       "context_note": "すり抜け（原意：溜走、穿过缝隙）在抽卡游戏中特指在保底机制下获得非目标角色的情况。特别是在小保底触发时抽到副C或其他非五星目标，就称为「すり抜け」。此用法在国服玩家中广泛使用，属于游戏社区黑话。",
       "created_at": "2026-05-18T06:22:24.450Z",
       "srs": {
-        "interval": 0,
+        "interval": 1,
         "ease": 2.5,
-        "reps": 0,
+        "reps": 1,
         "lapses": 0,
         "next_review": "2026-05-18",
-        "last_review": null
+        "last_review": "2026-05-18"
       }
     },
     {
@@ -342,12 +342,12 @@
       "context_note": "引き上げる有多个含义：(1)提高/上调数值（工资、利率等）；(2)撤回/撤出人员或部队。注意不要与「引っ張る」(拉)混淆。在商业场景中常用。",
       "created_at": "2026-05-18T14:04:56.000Z",
       "srs": {
-        "interval": 0,
+        "interval": 1,
         "ease": 2.5,
-        "reps": 0,
+        "reps": 1,
         "lapses": 0,
         "next_review": "2026-05-18",
-        "last_review": null
+        "last_review": "2026-05-18"
       }
     },
     {
@@ -376,12 +376,12 @@
       "context_note": "株（かぶ）在这里指「老員工、元老」。常用于公司或组织语境，表示资历深、待久的人。有时含有尊敬或怀旧的色彩。",
       "created_at": "2026-05-18T14:17:41.080Z",
       "srs": {
-        "interval": 0,
+        "interval": 1,
         "ease": 2.5,
-        "reps": 0,
+        "reps": 1,
         "lapses": 0,
         "next_review": "2026-05-18",
-        "last_review": null
+        "last_review": "2026-05-18"
       }
     }
   ]
