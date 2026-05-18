@@ -85,8 +85,16 @@ export async function fillNoteWithAI(type, input, imageBlob = null) {
   const text = data.content?.[0]?.text || '';
   const m = text.match(/\{[\s\S]*\}/);
   if (!m) throw new Error('AI 没有返回有效 JSON，请重试');
-  const parsed = JSON.parse(m[0]);
+  const parsed = parseAiJson(m[0]);
   return { ...parsed, type };
+}
+
+function parseAiJson(raw) {
+  // First try parsing as-is
+  try { return JSON.parse(raw); } catch {}
+  // Strip trailing commas before } or ] (common AI mistake)
+  const cleaned = raw.replace(/,(\s*[}\]])/g, '$1');
+  return JSON.parse(cleaned);
 }
 
 async function blobToBase64(blob) {
