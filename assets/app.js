@@ -29,15 +29,9 @@ async function reloadFromGitHub() {
 const TYPE_LABELS = {
   all:        { zh: '全部',   en: 'ALL' },
   word:       { zh: '单词',   en: 'WORD' },
-  phrase:     { zh: '句型',   en: 'PHRASE' },
-  grammar:    { zh: '语法',   en: 'GRAMMAR' },
   expression: { zh: '表达',   en: 'EXPRESSION' },
-  culture:    { zh: '文化',   en: 'CULTURE' },
 };
-const VALID_TYPES = ['word', 'phrase', 'grammar', 'expression', 'culture'];
-const TYPE_LABELS_OPTS = VALID_TYPES.map(t =>
-  `<option value="${t}">${TYPE_LABELS[t].zh}（${TYPE_LABELS[t].en}）</option>`
-).join('');
+const VALID_TYPES = ['word', 'expression'];
 
 const state = {
   notes: [],
@@ -333,10 +327,6 @@ function _openQuickAddForm() {
     <h2 style="margin-bottom:1.25rem;">＋ 添加笔记</h2>
     <div class="add-form">
       <div class="form-row">
-        <label class="form-label">类型 <span class="req">*</span></label>
-        <select id="qf-type" class="form-input">${TYPE_LABELS_OPTS}</select>
-      </div>
-      <div class="form-row">
         <label class="form-label">内容</label>
         <textarea id="qf-input" class="form-input" rows="3"
           placeholder="直接写日文词语或句子，也可加中文备注&#10;例：ブラッシュアップ — 刚才会议里同事说的"></textarea>
@@ -397,7 +387,6 @@ function _openQuickAddForm() {
 
 function _getQuickFormData() {
   return {
-    type:  $('#qf-type')?.value || 'word',
     input: $('#qf-input')?.value.trim() || '',
   };
 }
@@ -413,7 +402,7 @@ function showQuickMsg(text, type) {
    快速添加 → AI 实时补全
    ====================================================== */
 async function submitQuickToAI(imageBlob) {
-  const { type, input } = _getQuickFormData();
+  const { input } = _getQuickFormData();
   if (!input && !imageBlob) { showQuickMsg('请填写内容或添加截图', 'error'); return; }
 
   if (!hasAiKey()) {
@@ -428,7 +417,7 @@ async function submitQuickToAI(imageBlob) {
   showQuickMsg('🤖 AI 分析中，请稍候…', 'info');
 
   try {
-    const aiNote = await fillNoteWithAI(type, input, imageBlob);
+    const aiNote = await fillNoteWithAI(input, imageBlob);
     _openNoteForm({ mode: 'ai-review', note: aiNote, imageBlob });
   } catch (e) {
     if (aiBtn) aiBtn.disabled = false;
@@ -451,7 +440,7 @@ async function submitQuickToAI(imageBlob) {
    快速添加 → 暂存到 pending 队列
    ====================================================== */
 async function submitQuickToQueue(imageBlob) {
-  const { type, input } = _getQuickFormData();
+  const { input } = _getQuickFormData();
   if (!input && !imageBlob) { showQuickMsg('请填写内容或添加截图', 'error'); return; }
 
   const aiBtn = $('#qf-ai-btn');
@@ -477,7 +466,7 @@ async function submitQuickToQueue(imageBlob) {
     }
 
     const entry = {
-      id: pendingId, type, input,
+      id: pendingId, input,
       ...(imagePath ? { image: imagePath } : {}),
       created_at: new Date().toISOString(),
     };
@@ -486,7 +475,7 @@ async function submitQuickToQueue(imageBlob) {
       data.pending = [...(data.pending || []), entry];
       data.updated_at = new Date().toISOString();
       return data;
-    }, `add pending: ${truncate(input, 40) || '(image)'} (${type})`);
+    }, `add pending: ${truncate(input, 40) || '(image)'}`);
 
     state.pending = [...state.pending, entry];
     renderActionBar();
@@ -750,7 +739,7 @@ function _renderPendingModal() {
     : items.map(p => `
         <div class="pending-item" data-id="${esc(p.id)}">
           <div class="pending-item-header">
-            <span class="pending-type-badge">${TYPE_LABELS[p.type]?.zh || p.type}</span>
+            <span class="pending-type-badge">待补全</span>
             <button class="btn-delete pending-del-btn" data-id="${esc(p.id)}" title="删除">🗑</button>
           </div>
           <div class="pending-input">${esc(p.input || '（无文字内容）')}</div>

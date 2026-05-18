@@ -11,8 +11,7 @@ import { speak } from './speech.js';
 const i18n = () => window._quizI18n || {};
 
 const TYPE_ZH = {
-  word: '单词', phrase: '句型', grammar: '语法',
-  expression: '表达', culture: '文化',
+  word: '单词', expression: '表达',
 };
 
 const state = {
@@ -136,9 +135,6 @@ function renderCard() {
 
 /* ===== 题型路由 ===== */
 function chooseQType(note) {
-  if (note.type === 'grammar' || note.type === 'culture') {
-    return { label: '知识点', prompt: '请回忆该项目的含义与用法：', question: note.front, answer: note.back, kana: note.kana };
-  }
   if (state.index % 2 === 0) {
     return { label: '中→日', prompt: '中文意思对应的日语是？', question: note.back, answer: note.front, kana: note.kana };
   }
