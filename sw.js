@@ -4,7 +4,7 @@
    - data/notes.json はネットワークファースト（更新を素早く反映）
    ======================================================== */
 
-const CACHE_NAME = 'nihongo-notebook-v7-v2.2';
+const CACHE_NAME = 'nihongo-notebook-__BUILD_ID__';
 const STATIC_ASSETS = [
   './',
   './index.html',
@@ -71,15 +71,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 静的アセット: キャッシュ優先
+  // 静的アセット: stale-while-revalidate（先返回缓存，同时后台更新）
   event.respondWith(
-    caches.match(request).then((cached) => cached || fetch(request).then((res) => {
-      // 同一オリジンのみキャッシュに追加
-      if (url.origin === self.location.origin) {
-        const copy = res.clone();
-        caches.open(CACHE_NAME).then((c) => c.put(request, copy));
-      }
-      return res;
-    }).catch(() => caches.match('./index.html')))
+    caches.open(CACHE_NAME).then((cache) =>
+      cache.match(request).then((cached) => {
+        const networkFetch = fetch(request).then((res) => {
+          if (url.origin === self.location.origin && res.ok) {
+            cache.put(request, res.clone());
+          }
+          return res;
+        }).catch(() => null);
+        return cached || networkFetch;
+      })
+    )
   );
 });
