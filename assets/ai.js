@@ -37,7 +37,7 @@ If the user's input already contains a Chinese translation, use and refine it.
 If there is a screenshot, use it to understand the visual context (game UI, meeting document, etc.) when generating examples and notes.
 Return ONLY the JSON object. No markdown fences, no explanation.`;
 
-export async function fillNoteWithAI(input, imageBlob = null) {
+export async function fillNoteWithAI(input, imageBlob = null, { onRetry } = {}) {
   const key = getAiKey();
   if (!key) throw new Error('NO_AI_KEY');
   const endpoint = getProxyUrl() || DIRECT_ENDPOINT;
@@ -57,37 +57,56 @@ export async function fillNoteWithAI(input, imageBlob = null) {
     text: `内容：${input || '（请从截图中提取）'}`,
   });
 
-  const res = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'x-api-key': key,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 1024,
-      system: SYSTEM,
-      messages: [{ role: 'user', content: contentBlocks }],
-    }),
+  const body = JSON.stringify({
+    model: MODEL,
+    max_tokens: 1024,
+    system: SYSTEM,
+    messages: [{ role: 'user', content: contentBlocks }],
   });
 
-  if (!res.ok) {
-    const body = await res.text();
-    let msg;
-    try { msg = JSON.parse(body)?.error?.message; } catch {}
-    throw new Error(msg || `API 错误 ${res.status}`);
+  const MAX_RETRIES = 3;
+  let lastError;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    if (attempt > 0) {
+      const delay = 1000 * 2 ** (attempt - 1); // 1s, 2s, 4s
+      onRetry?.(attempt, MAX_RETRIES, delay);
+      await new Promise(r => setTimeout(r, delay));
+    }
+
+    const res = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+      },
+      body,
+    });
+
+    if (!res.ok) {
+      const raw = await res.text();
+      let errMsg, errType;
+      try { ({ message: errMsg, type: errType } = JSON.parse(raw)?.error ?? {}); } catch {}
+      // 529 overloaded_error: retry with backoff
+      if (res.status === 529 || errType === 'overloaded_error') {
+        lastError = new Error(errMsg || 'API 过载，请稍候重试');
+        continue;
+      }
+      throw new Error(errMsg || `API 错误 ${res.status}`);
+    }
+
+    const data = await res.json();
+    const text = data.content?.[0]?.text || '';
+    const m = text.match(/\{[\s\S]*\}/);
+    if (!m) throw new Error('AI 没有返回有效 JSON，请重试');
+    const parsed = parseAiJson(m[0]);
+    if (parsed.type !== 'word' && parsed.type !== 'expression') {
+      parsed.type = 'word';
+    }
+    return parsed;
   }
 
-  const data = await res.json();
-  const text = data.content?.[0]?.text || '';
-  const m = text.match(/\{[\s\S]*\}/);
-  if (!m) throw new Error('AI 没有返回有效 JSON，请重试');
-  const parsed = parseAiJson(m[0]);
-  if (parsed.type !== 'word' && parsed.type !== 'expression') {
-    parsed.type = 'word';
-  }
-  return parsed;
+  throw lastError;
 }
 
 function parseAiJson(raw) {

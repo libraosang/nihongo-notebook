@@ -417,7 +417,10 @@ async function submitQuickToAI(imageBlob) {
   showQuickMsg('🤖 AI 分析中，请稍候…', 'info');
 
   try {
-    const aiNote = await fillNoteWithAI(input, imageBlob);
+    const aiNote = await fillNoteWithAI(input, imageBlob, {
+      onRetry: (attempt, max, delay) =>
+        showQuickMsg(`🤖 AI 服务繁忙，${delay / 1000}s 后重试（${attempt}/${max}）…`, 'info'),
+    });
     _openNoteForm({ mode: 'ai-review', note: aiNote, imageBlob });
   } catch (e) {
     if (aiBtn) aiBtn.disabled = false;
