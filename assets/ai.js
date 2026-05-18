@@ -23,20 +23,21 @@ export const hasOpenAiKey = () => !!localStorage.getItem(OPENAI_KEY_STORAGE);
 
 const SYSTEM = `You are a Japanese language expert helping a game localizer in Tokyo build a personal vocabulary notebook.
 Given a word, phrase, grammar point, or expression — plus optional screenshot context — return ONLY a valid JSON object with these fields:
+- type: REQUIRED. Must be exactly "word" (a single vocabulary item — a single noun, verb, adjective, adverb, or compound noun) or "expression" (a multi-word phrase, idiom, grammar pattern such as 〜てしまう, set expression, or business set phrase)
 - front: the Japanese word/phrase/grammar (string, required)
 - back: concise Chinese translation or explanation (string, required)
 - kana: hiragana/katakana reading (string; omit if identical to front or not applicable)
 - romaji: romanization using Hepburn system (string, optional)
 - pos: part of speech in Japanese notation, e.g. 名詞、動詞(自)、形容詞、副詞、接続詞、慣用句 (string, optional)
 - examples: array of 1-3 example sentences, each {ja: string, zh: string} (array)
-- tags: relevant tag array, e.g. ["ビジネス","外来語","N3","ゲーム"] — include JLPT level if you know it (array)
+- tags: relevant tag array, e.g. ["ビジネス","外来語","N3","ゲーム","文化"] — include JLPT level if you know it; use "文化" tag for culturally-rooted terms (array)
 - context_note: memory tip, usage nuance, or common mistake in Chinese (string, optional)
 
 If the user's input already contains a Chinese translation, use and refine it.
 If there is a screenshot, use it to understand the visual context (game UI, meeting document, etc.) when generating examples and notes.
 Return ONLY the JSON object. No markdown fences, no explanation.`;
 
-export async function fillNoteWithAI(type, input, imageBlob = null) {
+export async function fillNoteWithAI(input, imageBlob = null) {
   const key = getAiKey();
   if (!key) throw new Error('NO_AI_KEY');
   const endpoint = getProxyUrl() || DIRECT_ENDPOINT;
@@ -51,12 +52,9 @@ export async function fillNoteWithAI(type, input, imageBlob = null) {
     });
   }
 
-  const typeLabels = {
-    word: '单词', phrase: '句型', grammar: '语法', expression: '表达', culture: '文化',
-  };
   contentBlocks.push({
     type: 'text',
-    text: `类型：${typeLabels[type] || type}\n内容：${input || '（请从截图中提取）'}`,
+    text: `内容：${input || '（请从截图中提取）'}`,
   });
 
   const res = await fetch(endpoint, {
@@ -86,7 +84,10 @@ export async function fillNoteWithAI(type, input, imageBlob = null) {
   const m = text.match(/\{[\s\S]*\}/);
   if (!m) throw new Error('AI 没有返回有效 JSON，请重试');
   const parsed = parseAiJson(m[0]);
-  return { ...parsed, type };
+  if (parsed.type !== 'word' && parsed.type !== 'expression') {
+    parsed.type = 'word';
+  }
+  return parsed;
 }
 
 function parseAiJson(raw) {

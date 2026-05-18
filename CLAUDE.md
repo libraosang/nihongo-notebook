@@ -8,12 +8,12 @@
 
 1. 读取 `data/pending.json`，检查 `pending` 数组。
 2. 若数组为空，告知用户无待处理项目。
-3. 对每条待处理项目（`{ id, type, input, image?, created_at }`）：
+3. 对每条待处理项目（`{ id, input, image?, created_at }`，pending 阶段不存 type）：
    a. 若有 `image` 字段，用 `Read` 工具读取该图片（支持 WebP/PNG/JPG）。
-   b. 综合 `input` 文本 + 图片内容，分析日语词汇，生成完整笔记 JSON：
+   b. 综合 `input` 文本 + 图片内容，分析日语词汇，**由你自行判断 type**（`word` 或 `expression`），生成完整笔记 JSON：
       ```json
       {
-        "type": "...",
+        "type": "word | expression",
         "front": "（日文）",
         "back": "（中文释义）",
         "kana": "（假名读法）",
@@ -25,7 +25,9 @@
         "image": "data/images/<pending-id>.webp"
       }
       ```
+      type 判断准则：单一词汇（含复合名词）→ `word`；多词组合 / 句型 / 语法点 / 习语 / 商务套话 → `expression`。文化背景请用 `tags: ["文化"]` 标记，不再单列 type。
       注意：不要在 JSON 里带 `id`、`created_at`、`srs`，脚本自动生成。
+      兼容：若旧 pending entry 仍带 `type` 字段，忽略它，按上述准则重新判断。
    c. 在聊天里展示提议，**逐条等用户确认**（用户可说「把假名改成 XX」「标签加 N3」等微调）。
 
 4. 用户确认某条后：
@@ -69,9 +71,13 @@
 
 ## 数据 schema 参考
 
-`type` 可选值：`word` | `phrase` | `grammar` | `expression` | `culture`
+`type` 可选值：`word` | `expression`
+- `word`：单一词汇（名词/动词/形容词/副词/复合名词等单个词）
+- `expression`：多词组合 — 句型、语法点（如 〜てしまう）、习语、商务套话、固定搭配
 
-`data/pending.json` 结构：
+文化背景类知识不再单列 type，统一用 `tags: ["文化"]` 标记。
+
+`data/pending.json` 结构（pending 阶段不存 type，由 Claude 处理时推断）：
 ```json
 {
   "schema_version": 1,
@@ -79,7 +85,6 @@
   "pending": [
     {
       "id": "pending-20260516-001",
-      "type": "word",
       "input": "ブラッシュアップ — 刚才会议里同事说的",
       "image": "data/pending-images/pending-20260516-001.webp",
       "created_at": "2026-05-16T22:30:00+09:00"
