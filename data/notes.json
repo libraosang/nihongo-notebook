@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-05-19T01:08:12.059Z",
+  "updated_at": "2026-05-19T01:08:28.939Z",
   "notes": [
     {
       "type": "word",
@@ -465,7 +465,7 @@
       "id": "20260519-001",
       "type": "expression",
       "front": "お勤めご苦労様です",
-      "back": "辛苦工作了（对在工作中的人的敬语问候，带有感谢和尊敬的意思）",
+      "back": "辛苦工作了（上对下，对在工作中的人的敬语问候，带有感谢和尊敬的意思）",
       "kana": "おつとめごくろうさまです",
       "romaji": "otsutsutome gokurō sama desu",
       "pos": "慣用句",
@@ -494,7 +494,8 @@
         "lapses": 0,
         "next_review": "2026-05-19",
         "last_review": null
-      }
+      },
+      "updated_at": "2026-05-19T01:08:28.939Z"
     }
   ]
 }
