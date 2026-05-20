@@ -189,6 +189,27 @@
       "score": 0,
       "via": "web",
       "question_type": "cn2jp"
+    },
+    {
+      "id": "20260518-005",
+      "date": "2026-05-20T08:53:06.150Z",
+      "score": 3,
+      "via": "web",
+      "question_type": "cn2jp"
+    },
+    {
+      "id": "20260519-001",
+      "date": "2026-05-20T08:53:12.887Z",
+      "score": 0,
+      "via": "web",
+      "question_type": "jp2cn"
+    },
+    {
+      "id": "20260518-004",
+      "date": "2026-05-20T08:53:17.275Z",
+      "score": 3,
+      "via": "web",
+      "question_type": "cn2jp"
     }
   ]
 }
