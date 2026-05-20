@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-05-19T01:08:28.939Z",
+  "updated_at": "2026-05-20T08:52:55.195Z",
   "notes": [
     {
       "type": "word",
@@ -414,12 +414,12 @@
       "context_note": "本义是鱼'咬住'诱饵，引申为人被某种吸引力所诱惑、对某事产生强烈兴趣。常用于营销、骗局、热点话题等语境。也可用于正面含义（对内容感兴趣）。",
       "created_at": "2026-05-18T14:30:45.749Z",
       "srs": {
-        "interval": 0,
-        "ease": 2.5,
-        "reps": 0,
+        "interval": 1,
+        "ease": 2.36,
+        "reps": 1,
         "lapses": 0,
-        "next_review": "2026-05-18",
-        "last_review": null
+        "next_review": "2026-05-20",
+        "last_review": "2026-05-20"
       }
     },
     {
@@ -453,12 +453,12 @@
       "context_note": "「ごねる」强调以不合理或过度的态度坚持自己的要求，往往带有负面含义。与「駄々をこねる（だだをこねる）」搭配最常见。注意不是单纯的'找茬'，而是蛮缠、耍赖的行为。",
       "created_at": "2026-05-18T14:32:20.538Z",
       "srs": {
-        "interval": 0,
-        "ease": 2.5,
+        "interval": 1,
+        "ease": 1.7,
         "reps": 0,
-        "lapses": 0,
-        "next_review": "2026-05-18",
-        "last_review": null
+        "lapses": 1,
+        "next_review": "2026-05-20",
+        "last_review": "2026-05-20"
       }
     },
     {
@@ -488,12 +488,12 @@
       "context_note": "上对下，有昭和感\n有这是一个常见的敬语表达，用于感谢对方的辛苦工作。'ご苦労様' 是 '苦労様' 的尊敬形式。注意：对上司或客户使用时，有时用 'お疲れ様です' 更为恰当，因为 'ご苦労様' 在某些场合可能显得有上对下的感觉。",
       "created_at": "2026-05-19T01:08:12.058Z",
       "srs": {
-        "interval": 0,
-        "ease": 2.5,
+        "interval": 1,
+        "ease": 1.7,
         "reps": 0,
-        "lapses": 0,
-        "next_review": "2026-05-19",
-        "last_review": null
+        "lapses": 1,
+        "next_review": "2026-05-20",
+        "last_review": "2026-05-20"
       },
       "updated_at": "2026-05-19T01:08:28.939Z"
     }
