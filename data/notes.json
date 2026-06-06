@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-06-06T13:58:28.700Z",
+  "updated_at": "2026-06-06T14:51:57.216Z",
   "notes": [
     {
       "type": "word",
@@ -28,12 +28,12 @@
       "id": "20260516-001",
       "created_at": "2026-05-16T14:43:30+00:00",
       "srs": {
-        "interval": 6,
-        "ease": 2.7,
-        "reps": 2,
+        "interval": 16,
+        "ease": 2.8,
+        "reps": 3,
         "lapses": 0,
-        "next_review": "2026-05-21",
-        "last_review": "2026-05-16"
+        "next_review": "2026-06-21",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -69,12 +69,12 @@
       "context_note": "振り落とす是他动词形式（主动），表示'甩掉、淘汰某人'；振り落とされる是被动形式，表示'被淘汰、不合格'。常用于竞争、考试、选拔等场景。注意与'脱落する'（脱落）的区别——前者强调被动的淘汰，后者强调物理上的脱落。",
       "created_at": "2026-05-16T15:41:28.745Z",
       "srs": {
-        "interval": 6,
+        "interval": 15,
         "ease": 2.5,
-        "reps": 2,
+        "reps": 3,
         "lapses": 0,
-        "next_review": "2026-05-23",
-        "last_review": "2026-05-18"
+        "next_review": "2026-06-20",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -108,12 +108,12 @@
       "context_note": "有两个主要用法：①作为他动词表示'募集、招募'（如募る人員）；②作为自动词表示某种感情、情绪逐渐加强、增加。例句中'不安が募る'是自动词用法，意思是'不安的情绪越来越强'。",
       "created_at": "2026-05-16T15:46:46.410Z",
       "srs": {
-        "interval": 6,
+        "interval": 15,
         "ease": 2.5,
-        "reps": 2,
+        "reps": 3,
         "lapses": 0,
-        "next_review": "2026-05-23",
-        "last_review": "2026-05-18"
+        "next_review": "2026-06-20",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -147,12 +147,12 @@
       "context_note": "「各々」是较为正式、书面语的表达，常用于游戏叙事、公式文档中。日常口语中更常用「それぞれ」。两者意思相近，但「各々」显得更庄重。",
       "created_at": "2026-05-16T15:51:00.576Z",
       "srs": {
-        "interval": 6,
-        "ease": 2.6,
-        "reps": 2,
+        "interval": 16,
+        "ease": 2.46,
+        "reps": 3,
         "lapses": 0,
-        "next_review": "2026-05-23",
-        "last_review": "2026-05-18"
+        "next_review": "2026-06-21",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -182,12 +182,12 @@
       "context_note": "ダウジング来自英文 dowsing。在游戏中常指用特殊工具寻找隐藏物品的机制。不仅是探水，也可泛指用探杆进行的各种探查活动。",
       "created_at": "2026-05-16T16:01:35.371Z",
       "srs": {
-        "interval": 6,
+        "interval": 15,
         "ease": 2.5,
-        "reps": 2,
+        "reps": 3,
         "lapses": 0,
-        "next_review": "2026-05-23",
-        "last_review": "2026-05-18"
+        "next_review": "2026-06-20",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -222,12 +222,12 @@
       "context_note": "来自法语camouflage。在游戏中常用于描述隐身、伪装或躲避敌人的机制。也可引申为'隐瞒真相'的意思。",
       "created_at": "2026-05-16T16:04:59.634Z",
       "srs": {
-        "interval": 6,
-        "ease": 2.5,
-        "reps": 2,
-        "lapses": 0,
-        "next_review": "2026-05-23",
-        "last_review": "2026-05-18"
+        "interval": 1,
+        "ease": 1.7,
+        "reps": 0,
+        "lapses": 1,
+        "next_review": "2026-06-06",
+        "last_review": "2026-06-06"
       },
       "updated_at": "2026-05-16T16:05:38.321Z"
     },
@@ -262,12 +262,12 @@
       "context_note": "メンツ（面子）来自中文，常见于商业竞争或国际关系中。强调为了维护自己的名声、地位或威信而与他人竞争，有时带有贬义含义，暗示这种竞争可能非理性或浪费资源。",
       "created_at": "2026-05-17T15:21:40.400Z",
       "srs": {
-        "interval": 6,
-        "ease": 2.5,
-        "reps": 2,
+        "interval": 15,
+        "ease": 2.6,
+        "reps": 3,
         "lapses": 0,
-        "next_review": "2026-05-23",
-        "last_review": "2026-05-18"
+        "next_review": "2026-06-20",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -303,12 +303,12 @@
       "context_note": "すり抜け（原意：溜走、穿过缝隙）在抽卡游戏中特指在保底机制下获得非目标角色的情况。特别是在小保底触发时抽到副C或其他非五星目标，就称为「すり抜け」。此用法在国服玩家中广泛使用，属于游戏社区黑话。",
       "created_at": "2026-05-18T06:22:24.450Z",
       "srs": {
-        "interval": 6,
+        "interval": 15,
         "ease": 2.5,
-        "reps": 2,
+        "reps": 3,
         "lapses": 0,
-        "next_review": "2026-05-23",
-        "last_review": "2026-05-18"
+        "next_review": "2026-06-20",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -342,12 +342,12 @@
       "context_note": "引き上げる有多个含义：(1)提高/上调数值（工资、利率等）；(2)撤回/撤出人员或部队。注意不要与「引っ張る」(拉)混淆。在商业场景中常用。",
       "created_at": "2026-05-18T14:04:56.000Z",
       "srs": {
-        "interval": 6,
-        "ease": 2.5,
-        "reps": 2,
+        "interval": 15,
+        "ease": 2.36,
+        "reps": 3,
         "lapses": 0,
-        "next_review": "2026-05-23",
-        "last_review": "2026-05-18"
+        "next_review": "2026-06-20",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -376,12 +376,12 @@
       "context_note": "株（かぶ）在这里指「老員工、元老」。常用于公司或组织语境，表示资历深、待久的人。有时含有尊敬或怀旧的色彩。",
       "created_at": "2026-05-18T14:17:41.080Z",
       "srs": {
-        "interval": 6,
+        "interval": 15,
         "ease": 2.5,
-        "reps": 2,
+        "reps": 3,
         "lapses": 0,
-        "next_review": "2026-05-23",
-        "last_review": "2026-05-18"
+        "next_review": "2026-06-20",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -414,12 +414,12 @@
       "context_note": "本义是鱼'咬住'诱饵，引申为人被某种吸引力所诱惑、对某事产生强烈兴趣。常用于营销、骗局、热点话题等语境。也可用于正面含义（对内容感兴趣）。",
       "created_at": "2026-05-18T14:30:45.749Z",
       "srs": {
-        "interval": 6,
-        "ease": 2.22,
-        "reps": 2,
+        "interval": 13,
+        "ease": 2.08,
+        "reps": 3,
         "lapses": 0,
-        "next_review": "2026-05-25",
-        "last_review": "2026-05-20"
+        "next_review": "2026-06-18",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -454,11 +454,11 @@
       "created_at": "2026-05-18T14:32:20.538Z",
       "srs": {
         "interval": 1,
-        "ease": 1.56,
-        "reps": 1,
-        "lapses": 1,
-        "next_review": "2026-05-20",
-        "last_review": "2026-05-20"
+        "ease": 1.3,
+        "reps": 0,
+        "lapses": 2,
+        "next_review": "2026-06-06",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -490,10 +490,10 @@
       "srs": {
         "interval": 1,
         "ease": 1.3,
-        "reps": 0,
+        "reps": 1,
         "lapses": 2,
-        "next_review": "2026-05-20",
-        "last_review": "2026-05-20"
+        "next_review": "2026-06-06",
+        "last_review": "2026-06-06"
       },
       "updated_at": "2026-05-19T01:08:28.939Z"
     },
@@ -527,12 +527,12 @@
       "context_note": "与「抵抗」同义，但「抗う」更具有主动的、积极的反抗感。常用于文学或正式文体中。「に抗う」表示「对...进行抵抗」。",
       "created_at": "2026-05-26T07:34:03.996Z",
       "srs": {
-        "interval": 0,
+        "interval": 1,
         "ease": 2.5,
-        "reps": 0,
+        "reps": 1,
         "lapses": 0,
-        "next_review": "2026-05-26",
-        "last_review": null
+        "next_review": "2026-06-06",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -566,12 +566,12 @@
       "context_note": "「垂れ下がる」「垂れさがる」两种写法皆可，表示物体因重力向下弯曲或悬垂的状态。常用于描写自然现象或物体形状。",
       "created_at": "2026-05-26T07:44:12.286Z",
       "srs": {
-        "interval": 0,
-        "ease": 2.5,
+        "interval": 1,
+        "ease": 1.7,
         "reps": 0,
-        "lapses": 0,
-        "next_review": "2026-05-26",
-        "last_review": null
+        "lapses": 1,
+        "next_review": "2026-06-06",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -604,12 +604,12 @@
       "context_note": "\"たか\"原意为鹰（鹫），\"くくる\"是系、束的意思。比喻将对手像绑鹰一样用低级的绳子束缚，引申为轻视。常用于警告不要轻敌的场景。",
       "created_at": "2026-06-05T13:27:13.100Z",
       "srs": {
-        "interval": 0,
+        "interval": 1,
         "ease": 2.5,
-        "reps": 0,
+        "reps": 1,
         "lapses": 0,
-        "next_review": "2026-06-05",
-        "last_review": null
+        "next_review": "2026-06-06",
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -643,12 +643,12 @@
       "context_note": "由来は江戸時代の「やじ屋」（看热闹的人）と「うま」（马）の組み合わせ。通常は否定的なニュアンスを持つ。英語の「rubberneck」に相当する。",
       "created_at": "2026-06-06T13:55:46.394Z",
       "srs": {
-        "interval": 0,
-        "ease": 2.5,
+        "interval": 1,
+        "ease": 1.7,
         "reps": 0,
-        "lapses": 0,
+        "lapses": 1,
         "next_review": "2026-06-06",
-        "last_review": null
+        "last_review": "2026-06-06"
       }
     },
     {
@@ -682,12 +682,12 @@
       "context_note": "「鼻から」是日语習語，直译是「从鼻子」。表示从一开始就不理解、不知道。通常用否定形式「わからない」。语气比普通的「わかりません」更强调「完全不懂」的状态。",
       "created_at": "2026-06-06T13:58:28.699Z",
       "srs": {
-        "interval": 0,
-        "ease": 2.5,
-        "reps": 0,
+        "interval": 1,
+        "ease": 2.36,
+        "reps": 1,
         "lapses": 0,
         "next_review": "2026-06-06",
-        "last_review": null
+        "last_review": "2026-06-06"
       }
     }
   ]
